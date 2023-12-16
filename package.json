@@ -1,0 +1,29 @@
+{
+  "name": "kirara",
+  "version": "0.0.1",
+  "description": "",
+  "keywords": [],
+  "homepage": "https://github.com/AetherIsland/kirara#readme",
+  "bugs": {
+    "url": "https://github.com/AetherIsland/kirara/issues"
+  },
+  "license": "MIT",
+  "main": "dist/main.js",
+  "type": "module",
+  "repository": "github:AetherIsland/kirara",
+  "scripts": {
+    "start": "node .",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write src/"
+  },
+  "devDependencies": {
+    "@tsconfig/node-lts": "^20.1.0",
+    "@types/node": "^20.10.4",
+    "prettier": "3.1.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "node-downloader-helper": "^2.1.9"
+  }
+}
