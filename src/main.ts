@@ -80,8 +80,7 @@ async function syncStorage(storage: StorageClass, fileList?: RemoteFileInfo[]) {
                 if (!info || info.status === FileStatus.ERROR) {
                     console.log('尝试下载', file.name);
                     await storage.downloadRemoteFile(file);
-                    info = await storage.getFileInfo(file);
-                    // info = { status: FileStatus.DOWNLOADING };
+                    info = { status: FileStatus.DOWNLOADING };
                 }
             } catch (err) {
                 console.log('尝试下载', file.name, '时发生错误', err);

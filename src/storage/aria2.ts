@@ -84,15 +84,13 @@ export class Aria2 implements StorageClass {
         this.#downloaders.set(filePath, proc);
         proc.once('error', (err) => {
             console.log('[Aria2] aria2c 进程操作发生错误', err);
+            this.#downloaders.delete(filePath);
         });
         proc.once('exit', (code, signal) => {
             if (code !== 0) {
                 console.log('[Aria2] aria2c 进程异常退出', { code, signal });
             }
             this.#downloaders.delete(filePath);
-        });
-        await new Promise((resolve) => {
-            proc.once('spawn', resolve);
         });
     }
 }
