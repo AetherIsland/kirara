@@ -17,7 +17,17 @@ import { Aria2 } from './storage/aria2.js';
 
 const PROVIDERS = [
     {
-        displayName: '原神',
+        displayName: '崩坏3（bh3_cn）',
+        gameFilter: ['latest', 'predl-latest'],
+        langFilter: ['zh-cn'],
+        takumi: new Takumi(
+            'https://bh3-launcher-static.mihoyo.com/bh3_cn/mdk/launcher/api/resource?channel_id=1&key=SyvuPnqL&launcher_id=4&sub_channel_id=1',
+            ['latest', 'predl-latest'],
+            ['zh-cn']
+        )
+    },
+    {
+        displayName: '原神（hk4e_cn）',
         gameFilter: ['latest-diff', 'predl-latest-diff'],
         langFilter: ['zh-cn'],
         takumi: new Takumi(
@@ -27,7 +37,7 @@ const PROVIDERS = [
         )
     },
     {
-        displayName: '崩坏：星穹铁道',
+        displayName: '崩坏：星穹铁道（hkrpg_cn）',
         gameFilter: ['latest-diff', 'predl-latest-diff'],
         langFilter: ['zh-cn'],
         takumi: new Takumi(

@@ -79,12 +79,13 @@ function invokeRFI(
     },
     tags: RemoteFileInfo['tags']
 ): RemoteFileInfo {
+    const url = new URL(obj.path);
     return {
-        name: obj.name,
+        name: obj.name || (url.pathname.split('/').pop() ?? obj.md5),
         size: Number(obj.size),
         package_size: Number(obj.package_size),
         md5: obj.md5,
-        url: new URL(obj.path),
+        url,
         tags
     };
 }
@@ -157,6 +158,13 @@ export class Takumi {
             this.#responseData;
         const fileList: RemoteFileInfo[] = [];
         const latestVer: string = game.latest.version;
+        if (this.#gameFilter.includes('latest')) {
+            if (game.latest.path) {
+                fileList.push(invokeRFI(game.latest, ['latest']));
+            } else {
+                // TODO: segments
+            }
+        }
         if (game.diffs.length && this.#gameFilter.includes('latest-diff')) {
             const item = game.diffs[0];
             fileList.push(invokeRFI(item, ['latest-diff']));
@@ -166,21 +174,29 @@ export class Takumi {
                 }
             }
         }
-        if (
-            pre_download_game &&
-            this.#gameFilter.includes('predl-latest-diff')
-        ) {
-            for (const item of pre_download_game.diffs) {
-                if (item.version === latestVer) {
-                    fileList.push(invokeRFI(item, ['predl-latest-diff']));
-                    for (const vp of item.voice_packs) {
-                        if (this.#langFilter.includes(vp.language)) {
-                            fileList.push(
-                                invokeRFI(vp, [
-                                    'predl-latest-diff',
-                                    vp.language
-                                ])
-                            );
+        if (pre_download_game) {
+            if (this.#gameFilter.includes('predl-latest')) {
+                if (pre_download_game.latest.path) {
+                    fileList.push(
+                        invokeRFI(pre_download_game.latest, ['latest'])
+                    );
+                } else {
+                    // TODO: segments
+                }
+            }
+            if (this.#gameFilter.includes('predl-latest-diff')) {
+                for (const item of pre_download_game.diffs) {
+                    if (item.version === latestVer) {
+                        fileList.push(invokeRFI(item, ['predl-latest-diff']));
+                        for (const vp of item.voice_packs) {
+                            if (this.#langFilter.includes(vp.language)) {
+                                fileList.push(
+                                    invokeRFI(vp, [
+                                        'predl-latest-diff',
+                                        vp.language
+                                    ])
+                                );
+                            }
                         }
                     }
                 }
