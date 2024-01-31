@@ -178,7 +178,7 @@ export class Takumi {
             if (this.#gameFilter.includes('predl-latest')) {
                 if (pre_download_game.latest.path) {
                     fileList.push(
-                        invokeRFI(pre_download_game.latest, ['latest'])
+                        invokeRFI(pre_download_game.latest, ['predl-latest'])
                     );
                 } else {
                     // TODO: segments
