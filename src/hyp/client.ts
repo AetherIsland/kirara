@@ -205,3 +205,5 @@ class HYPClient {
         return await getData(url, 'game_branches');
     }
 }
+
+export { LauncherId, GameId, HYPClient };
