@@ -1,3 +1,5 @@
+import { type GamePackage } from './GamePackage.js';
+
 /**
  * 启动器 ID
  */
@@ -164,7 +166,7 @@ class HYPClient {
         for (const game_id of game_ids) {
             url.searchParams.append('game_ids[]', game_id);
         }
-        return await getData(url, 'game_packages');
+        return await getData<GamePackage[]>(url, 'game_packages');
     }
 
     async getGameChannelSDKs(game_ids: string[] = []) {
