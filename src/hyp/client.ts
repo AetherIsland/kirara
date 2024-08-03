@@ -104,20 +104,20 @@ async function getData<T>(
 }
 
 class HYPClient {
-    private readonly apiBase: string;
+    readonly #apiBase: string;
 
     constructor(
-        private readonly launcher_id: LauncherId,
-        private readonly addtionalParams?: {
-            language?: string;
-            channel?: string;
-            sub_channel?: string;
+        readonly launcher_id: LauncherId,
+        readonly addtionalParams?: {
+            readonly language?: string;
+            readonly channel?: string;
+            readonly sub_channel?: string;
         }
     ) {
-        this.apiBase = getAPIBaseByLauncherId(this.launcher_id);
+        this.#apiBase = getAPIBaseByLauncherId(this.launcher_id);
     }
 
-    private getURL(
+    #getURL(
         apiName: string,
         options?: {
             withLanguage?: boolean;
@@ -125,7 +125,7 @@ class HYPClient {
             withSubChannel?: boolean;
         }
     ) {
-        const url = new URL(apiName, this.apiBase);
+        const url = new URL(apiName, this.#apiBase);
         url.searchParams.append('launcher_id', this.launcher_id);
         if (options?.withLanguage && this.addtionalParams?.language) {
             url.searchParams.append('language', this.addtionalParams.language);
@@ -143,12 +143,12 @@ class HYPClient {
     }
 
     async getGames() {
-        const url = this.getURL('getGames', { withLanguage: true });
+        const url = this.#getURL('getGames', { withLanguage: true });
         return await getData(url, 'games');
     }
 
     async getAllGameBasicInfo(game_id?: string) {
-        const url = this.getURL('getAllGameBasicInfo', { withLanguage: true });
+        const url = this.#getURL('getAllGameBasicInfo', { withLanguage: true });
         if (game_id) {
             url.searchParams.append('game_id', game_id);
         }
@@ -156,13 +156,13 @@ class HYPClient {
     }
 
     async getGameContent(game_id: string) {
-        const url = this.getURL('getGameContent', { withLanguage: true });
+        const url = this.#getURL('getGameContent', { withLanguage: true });
         url.searchParams.append('game_id', game_id);
         return await getData(url, 'content');
     }
 
     async getGamePackages(game_ids: string[] = []) {
-        const url = this.getURL('getGamePackages');
+        const url = this.#getURL('getGamePackages');
         for (const game_id of game_ids) {
             url.searchParams.append('game_ids[]', game_id);
         }
@@ -170,7 +170,7 @@ class HYPClient {
     }
 
     async getGameChannelSDKs(game_ids: string[] = []) {
-        const url = this.getURL('getGameChannelSDKs', {
+        const url = this.#getURL('getGameChannelSDKs', {
             withChannel: true,
             withSubChannel: true
         });
@@ -181,7 +181,7 @@ class HYPClient {
     }
 
     async getGameDeprecatedFileConfigs(game_ids: string[] = []) {
-        const url = this.getURL('getGameDeprecatedFileConfigs', {
+        const url = this.#getURL('getGameDeprecatedFileConfigs', {
             withChannel: true,
             withSubChannel: true
         });
@@ -192,7 +192,7 @@ class HYPClient {
     }
 
     async getGameConfigs(game_ids: string[] = []) {
-        const url = this.getURL('getGameConfigs');
+        const url = this.#getURL('getGameConfigs');
         for (const game_id of game_ids) {
             url.searchParams.append('game_ids[]', game_id);
         }
@@ -200,7 +200,7 @@ class HYPClient {
     }
 
     async getGameBranches(game_ids: string[] = []) {
-        const url = this.getURL('getGameBranches');
+        const url = this.#getURL('getGameBranches');
         for (const game_id of game_ids) {
             url.searchParams.append('game_ids[]', game_id);
         }
