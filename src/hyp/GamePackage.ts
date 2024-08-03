@@ -11,11 +11,11 @@ export type GamePackage = {
     /**
      * 主要分支
      */
-    main: GamePackageBranch;
+    main: GamePackageBranch | null;
     /**
      * 预下载分支
      */
-    pre_download: GamePackageBranch;
+    pre_download: GamePackageBranch | null;
 };
 
 /**

@@ -6,7 +6,7 @@ export type BasicFileInfo = {
 export type RemoteFileInfo = {
     name: string;
     size: number;
-    package_size: number;
+    required_free_space: number;
     md5: string; // TODO: check format
     url: URL;
     tags: string[];
@@ -30,4 +30,11 @@ export interface FileStorage {
     getFileInfo(file: BasicFileInfo): Promise<StoragedFileInfo>;
     removeFile(file: BasicFileInfo): Promise<void>;
     downloadRemoteFile(remoteFile: RemoteFileInfo): Promise<void>;
+}
+
+export interface FileProvider {
+    updatedAt?: number;
+    fileList?: RemoteFileInfo[];
+    deprecatedFileList?: BasicFileInfo[];
+    refresh(): Promise<boolean>;
 }

@@ -90,10 +90,7 @@ export class Local implements FileStorage {
         });
         this.#downloaders.set(filePath, dl);
         const info = await dl.getTotalSize();
-        if (
-            info.name !== remoteFile.name ||
-            info.total !== remoteFile.package_size
-        ) {
+        if (info.name !== remoteFile.name || info.total !== remoteFile.size) {
             await this.#setFileStatus(remoteFile, FileStatus.ERROR);
             throw new Error('FileInfo is inconsistent.');
         }

@@ -82,8 +82,8 @@ function invokeRFI(
     const url = new URL(obj.path);
     return {
         name: obj.name || (url.pathname.split('/').pop() ?? obj.md5),
-        size: Number(obj.size),
-        package_size: Number(obj.package_size),
+        size: Number(obj.package_size),
+        required_free_space: Number(obj.size),
         md5: obj.md5,
         url,
         tags
