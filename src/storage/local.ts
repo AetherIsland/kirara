@@ -7,12 +7,12 @@ import {
     FileStatus,
     type BasicFileInfo,
     type RemoteFileInfo,
-    type StorageClass,
+    type FileStorage,
     type StoragedFileInfo
 } from '../type.js';
 import { doSthIgnoreErrs } from '../utils.js';
 
-export class Local implements StorageClass {
+export class Local implements FileStorage {
     #root: string;
     #baseURL?: URL;
     #downloaders = new Map<string, DownloaderHelper>();

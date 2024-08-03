@@ -4,11 +4,11 @@ import {
     type BasicFileInfo,
     type RemoteFileInfo,
     type StoragedFileInfo,
-    type StorageClass,
+    type FileStorage,
     FileStatus
 } from '../type.js';
 
-export class Dummy implements StorageClass {
+export class Dummy implements FileStorage {
     #files = new Map<string, FileStatus>();
 
     async getFileInfo(file: BasicFileInfo) {

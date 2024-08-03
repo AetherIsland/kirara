@@ -9,7 +9,7 @@ import { doSthIgnoreErrs } from './utils.js';
 import {
     FileStatus,
     type BasicFileInfo,
-    type StorageClass,
+    type FileStorage,
     type PublicFileInfo,
     type RemoteFileInfo
 } from './type.js';
@@ -64,7 +64,7 @@ let publicStatus; // TODO: typing
 let publicStatusHash: string;
 
 async function removeDeprecatedFiles(
-    storage: StorageClass,
+    storage: FileStorage,
     deprecatedFileList?: BasicFileInfo[]
 ) {
     if (deprecatedFileList) {
@@ -79,7 +79,7 @@ async function removeDeprecatedFiles(
     }
 }
 
-async function syncStorage(storage: StorageClass, fileList?: RemoteFileInfo[]) {
+async function syncStorage(storage: FileStorage, fileList?: RemoteFileInfo[]) {
     const publicFileInfos: PublicFileInfo[] = [];
     if (fileList) {
         for (const file of fileList) {

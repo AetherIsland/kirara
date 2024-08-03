@@ -6,12 +6,12 @@ import {
     FileStatus,
     type BasicFileInfo,
     type RemoteFileInfo,
-    type StorageClass,
+    type FileStorage,
     type StoragedFileInfo
 } from '../type.js';
 import { doSthIgnoreErrs } from '../utils.js';
 
-export class Aria2 implements StorageClass {
+export class Aria2 implements FileStorage {
     #root: string;
     #baseURL?: URL;
     #downloaders = new Map<string, child_process.ChildProcess>();

@@ -26,7 +26,7 @@ export type StoragedFileInfo = {
 
 export type PublicFileInfo = RemoteFileInfo & StoragedFileInfo;
 
-export interface StorageClass {
+export interface FileStorage {
     getFileInfo(file: BasicFileInfo): Promise<StoragedFileInfo>;
     removeFile(file: BasicFileInfo): Promise<void>;
     downloadRemoteFile(remoteFile: RemoteFileInfo): Promise<void>;
