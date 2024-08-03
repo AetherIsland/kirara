@@ -3,7 +3,7 @@ import { type GamePackage } from './GamePackage.js';
 /**
  * 启动器 ID
  */
-enum LauncherId {
+export enum KnownLauncherId {
     miHoYoLauncher = 'jGHBHlcOq1',
     HoYoPlay = 'VYTpXlbWo8',
     BilibiliGenshin = 'umfgRO5gh5',
@@ -14,7 +14,7 @@ enum LauncherId {
 /**
  * 游戏 ID
  */
-enum GameId {
+export enum KnownGameId {
     bh3_cn = 'osvnlOc0S8',
     bh3_global = '5TIVvvcwtM',
     hk4e_cn = '1Z8W5NHUQb',
@@ -31,24 +31,24 @@ enum GameId {
 /**
  * 获取游戏对应的启动器 ID
  */
-function getLauncherIdByGameId(gameId: GameId) {
+export function getLauncherIdByGameId(gameId: string) {
     switch (gameId) {
-        case GameId.bh3_cn:
-        case GameId.hk4e_cn:
-        case GameId.hkrpg_cn:
-        case GameId.nap_cn:
-            return LauncherId.miHoYoLauncher;
-        case GameId.bh3_global:
-        case GameId.hk4e_global:
-        case GameId.hkrpg_global:
-        case GameId.nap_global:
-            return LauncherId.HoYoPlay;
-        case GameId.hk4e_bilibili:
-            return LauncherId.BilibiliGenshin;
-        case GameId.hkrpg_bilibili:
-            return LauncherId.BilibiliStarRail;
-        case GameId.nap_bilibili:
-            return LauncherId.BilibiliZZZ;
+        case KnownGameId.bh3_cn:
+        case KnownGameId.hk4e_cn:
+        case KnownGameId.hkrpg_cn:
+        case KnownGameId.nap_cn:
+            return KnownLauncherId.miHoYoLauncher;
+        case KnownGameId.bh3_global:
+        case KnownGameId.hk4e_global:
+        case KnownGameId.hkrpg_global:
+        case KnownGameId.nap_global:
+            return KnownLauncherId.HoYoPlay;
+        case KnownGameId.hk4e_bilibili:
+            return KnownLauncherId.BilibiliGenshin;
+        case KnownGameId.hkrpg_bilibili:
+            return KnownLauncherId.BilibiliStarRail;
+        case KnownGameId.nap_bilibili:
+            return KnownLauncherId.BilibiliZZZ;
         default:
             throw new Error(`Unknown GameId: ${gameId}`);
     }
@@ -57,14 +57,14 @@ function getLauncherIdByGameId(gameId: GameId) {
 /**
  * 获取启动器对应的 API 基址
  */
-function getAPIBaseByLauncherId(launcherId: LauncherId) {
+export function getAPIBaseByLauncherId(launcherId: string) {
     switch (launcherId) {
-        case LauncherId.miHoYoLauncher:
-        case LauncherId.BilibiliGenshin:
-        case LauncherId.BilibiliStarRail:
-        case LauncherId.BilibiliZZZ:
+        case KnownLauncherId.miHoYoLauncher:
+        case KnownLauncherId.BilibiliGenshin:
+        case KnownLauncherId.BilibiliStarRail:
+        case KnownLauncherId.BilibiliZZZ:
             return 'https://hyp-api.mihoyo.com/hyp/hyp-connect/api/';
-        case LauncherId.HoYoPlay:
+        case KnownLauncherId.HoYoPlay:
             return 'https://sg-hyp-api.hoyoverse.com/hyp/hyp-connect/api/';
         default:
             throw new Error(`Unknown LauncherId: ${launcherId}`);
@@ -103,11 +103,11 @@ async function getData<T>(
     }
 }
 
-class HYPClient {
+export class HYPClient {
     readonly #apiBase: string;
 
     constructor(
-        readonly launcher_id: LauncherId,
+        readonly launcher_id: string,
         readonly addtionalParams?: {
             readonly language?: string;
             readonly channel?: string;
@@ -207,5 +207,3 @@ class HYPClient {
         return await getData(url, 'game_branches');
     }
 }
-
-export { LauncherId, GameId, HYPClient };
