@@ -14,37 +14,88 @@ import {
     type RemoteFileInfo
 } from './type.js';
 import { Aria2 } from './storage/aria2.js';
+import { HYPClient, KnownLauncherId } from './hyp/client.js';
+import { HYPFilerProvider } from './hyp/provider.js';
+
+const client = new HYPClient(KnownLauncherId.miHoYoLauncher);
 
 const PROVIDERS = [
     {
         displayName: '崩坏3（bh3_cn）',
-        gameFilter: ['latest', 'predl-latest'],
+        gameFilter: ['main.major', 'pre_download.major'],
         langFilter: ['zh-cn'],
-        takumi: new Takumi(
-            'https://bh3-launcher-static.mihoyo.com/bh3_cn/mdk/launcher/api/resource?channel_id=1&key=SyvuPnqL&launcher_id=4&sub_channel_id=1',
-            ['latest', 'predl-latest'],
-            ['zh-cn']
-        )
+        takumi: new HYPFilerProvider(client, {
+            gameBizs: ['bh3_cn'],
+            audioLanguages: ['zh-cn'],
+            branchMain: {
+                major: true,
+                patches: false
+            },
+            branchPreDownload: {
+                major: true,
+                patches: false
+            }
+        })
     },
     {
         displayName: '原神（hk4e_cn）',
-        gameFilter: ['latest-diff', 'predl-latest-diff'],
+        gameFilter: [
+            'main.patches (latest-only)',
+            'pre_download.patches (latest-only)'
+        ],
         langFilter: ['zh-cn'],
-        takumi: new Takumi(
-            'https://sdk-static.mihoyo.com/hk4e_cn/mdk/launcher/api/resource?channel_id=1&key=eYd89JmJ&launcher_id=18&sub_channel_id=1',
-            ['latest-diff', 'predl-latest-diff'],
-            ['zh-cn']
-        )
+        takumi: new HYPFilerProvider(client, {
+            gameBizs: ['hk4e_cn'],
+            audioLanguages: ['zh-cn'],
+            branchMain: {
+                major: false,
+                patches: 'latest-only'
+            },
+            branchPreDownload: {
+                major: false,
+                patches: 'latest-only'
+            }
+        })
     },
     {
         displayName: '崩坏：星穹铁道（hkrpg_cn）',
-        gameFilter: ['latest-diff', 'predl-latest-diff'],
+        gameFilter: [
+            'main.patches (latest-only)',
+            'pre_download.patches (latest-only)'
+        ],
         langFilter: ['zh-cn'],
-        takumi: new Takumi(
-            'https://api-launcher-static.mihoyo.com/hkrpg_cn/mdk/launcher/api/resource?channel_id=1&key=6KcVuOkbcqjJomjZ&launcher_id=33&sub_channel_id=1',
-            ['latest-diff', 'predl-latest-diff'],
-            ['zh-cn']
-        )
+        takumi: new HYPFilerProvider(client, {
+            gameBizs: ['hkrpg_cn'],
+            audioLanguages: ['zh-cn'],
+            branchMain: {
+                major: false,
+                patches: 'latest-only'
+            },
+            branchPreDownload: {
+                major: false,
+                patches: 'latest-only'
+            }
+        })
+    },
+    {
+        displayName: '绝区零（nap_cn）',
+        gameFilter: [
+            'main.patches (latest-only)',
+            'pre_download.patches (latest-only)'
+        ],
+        langFilter: ['zh-cn'],
+        takumi: new HYPFilerProvider(client, {
+            gameBizs: ['nap_cn'],
+            audioLanguages: ['zh-cn'],
+            branchMain: {
+                major: false,
+                patches: 'latest-only'
+            },
+            branchPreDownload: {
+                major: false,
+                patches: 'latest-only'
+            }
+        })
     }
 ];
 
