@@ -2,7 +2,6 @@ import * as fsPromises from 'node:fs/promises';
 import * as timers from 'node:timers';
 import { createHash } from 'node:crypto';
 
-import { Takumi } from './takumi.js';
 import { Dummy } from './storage/dummy.js';
 import { Local } from './storage/local.js';
 import { doSthIgnoreErrs } from './utils.js';
