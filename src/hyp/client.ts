@@ -1,3 +1,4 @@
+import { type GameInfo } from './GameInfo.js';
 import { type GamePackage } from './GamePackage.js';
 
 /**
@@ -144,7 +145,7 @@ export class HYPClient {
 
     async getGames() {
         const url = this.#getURL('getGames', { withLanguage: true });
-        return await getData(url, 'games');
+        return await getData<GameInfo[]>(url, 'games');
     }
 
     async getAllGameBasicInfo(game_id?: string) {

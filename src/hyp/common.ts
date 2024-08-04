@@ -11,3 +11,20 @@ export type GameId = {
      */
     biz: string;
 };
+
+/**
+ * 图片信息
+ */
+export type Image = {
+    url: string;
+    link: string;
+};
+
+/**
+ * 图标信息
+ */
+export type Icon = {
+    url: string;
+    hover_url: string;
+    link: string;
+};
