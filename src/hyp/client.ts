@@ -143,11 +143,21 @@ export class HYPClient {
         return url;
     }
 
+    /**
+     * 获取所有游戏及其基本信息
+     *
+     * 返回内容与 `language` 选项有关
+     */
     async getGames() {
         const url = this.#getURL('getGames', { withLanguage: true });
         return await getData<GameInfo[]>(url, 'games');
     }
 
+    /**
+     * 获取（指定）游戏的启动器背景图
+     *
+     * 返回内容与 `language` 选项有关
+     */
     async getAllGameBasicInfo(game_id?: string) {
         const url = this.#getURL('getAllGameBasicInfo', { withLanguage: true });
         if (game_id) {
@@ -156,12 +166,20 @@ export class HYPClient {
         return await getData(url, 'game_info_list');
     }
 
+    /**
+     * 获取指定游戏的运营信息
+     *
+     * 返回内容与 `language` 选项有关
+     */
     async getGameContent(game_id: string) {
         const url = this.#getURL('getGameContent', { withLanguage: true });
         url.searchParams.append('game_id', game_id);
         return await getData(url, 'content');
     }
 
+    /**
+     * 获取（指定）游戏的包体信息
+     */
     async getGamePackages(game_ids: string[] = []) {
         const url = this.#getURL('getGamePackages');
         for (const game_id of game_ids) {
@@ -170,6 +188,11 @@ export class HYPClient {
         return await getData<GamePackage[]>(url, 'game_packages');
     }
 
+    /**
+     * 获取（指定）游戏的渠道 SDK 信息
+     *
+     * 返回内容与 `channel` 和 `sub_channel` 选项有关
+     */
     async getGameChannelSDKs(game_ids: string[] = []) {
         const url = this.#getURL('getGameChannelSDKs', {
             withChannel: true,
@@ -181,6 +204,11 @@ export class HYPClient {
         return await getData(url, 'game_channel_sdks');
     }
 
+    /**
+     * 获取（指定）游戏的弃用文件配置信息
+     *
+     * 返回内容与 `channel` 和 `sub_channel` 选项有关
+     */
     async getGameDeprecatedFileConfigs(game_ids: string[] = []) {
         const url = this.#getURL('getGameDeprecatedFileConfigs', {
             withChannel: true,
@@ -192,6 +220,9 @@ export class HYPClient {
         return await getData(url, 'deprecated_file_configs');
     }
 
+    /**
+     * 获取（指定）游戏的资产、日志、截图等文件系统路径
+     */
     async getGameConfigs(game_ids: string[] = []) {
         const url = this.#getURL('getGameConfigs');
         for (const game_id of game_ids) {
@@ -200,6 +231,9 @@ export class HYPClient {
         return await getData(url, 'launch_configs');
     }
 
+    /**
+     * chunk 模式下载通道信息
+     */
     async getGameBranches(game_ids: string[] = []) {
         const url = this.#getURL('getGameBranches');
         for (const game_id of game_ids) {
