@@ -189,6 +189,19 @@ export class HYPClient {
     }
 
     /**
+     * 获取（指定）游戏的插件信息
+     *
+     * 一般是 DirectX 运行时
+     */
+    async getGamePlugins(game_ids: string[] = []) {
+        const url = this.#getURL('getGamePlugins');
+        for (const game_id of game_ids) {
+            url.searchParams.append('game_ids[]', game_id);
+        }
+        return await getData(url, 'plugin_releases');
+    }
+
+    /**
      * 获取（指定）游戏的渠道 SDK 信息
      *
      * 返回内容与 `channel` 和 `sub_channel` 选项有关
