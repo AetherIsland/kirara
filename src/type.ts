@@ -31,10 +31,3 @@ export interface FileStorage {
     removeFile(file: BasicFileInfo): Promise<void>;
     downloadRemoteFile(remoteFile: RemoteFileInfo): Promise<void>;
 }
-
-export interface FileProvider {
-    updatedAt?: number;
-    fileList?: RemoteFileInfo[];
-    deprecatedFileList?: BasicFileInfo[];
-    refresh(): Promise<boolean>;
-}

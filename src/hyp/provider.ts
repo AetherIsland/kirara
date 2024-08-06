@@ -1,13 +1,31 @@
+import * as _ from 'lodash-es';
+
 import {
-    type FileProvider,
     type BasicFileInfo,
     type RemoteFileInfo
 } from '../type.js';
-import { type HYPClient } from './client.js';
 import {
     type GamePackageGroup,
-    type GamePackageBranch
+    type GamePackageBranch,
+    type GamePackage,
+    type GamePackageFile
 } from './GamePackage.js';
+
+type HYPFileInfo = {
+    name: string;
+    url: URL;
+    size: number;
+    required_free_space: number;
+    md5: string;
+    meta: {
+        branch?: 'main' | 'pre_download';
+        packageType?: 'major' | 'patch';
+        isLatestPatch?: boolean;
+        version?: string;
+        resourceType?: 'game' | 'audio';
+        audioLanguage?: string;
+    };
+};
 
 type BranchOption = {
     major?: boolean;
@@ -15,88 +33,127 @@ type BranchOption = {
 };
 
 export type HYPFileProviderOption = {
-    gameBizs?: string[];
     audioLanguages?: string[];
     branchMain?: BranchOption;
     branchPreDownload?: BranchOption;
 };
 
-function parsePackageGroup(
-    group: GamePackageGroup,
-    audioLanguages: string[],
-    addtionalTags: string[]
-) {
-    const result: RemoteFileInfo[] = [];
-    for (const file of group.game_pkgs) {
-        const url = new URL(file.url);
-        result.push({
-            name: url.pathname.split('/').pop() ?? file.md5,
-            size: Number(file.size),
-            required_free_space: Number(file.decompressed_size),
-            md5: file.md5,
-            url,
-            tags: [...addtionalTags, group.version, 'game']
-        });
+function constructRemoteFileInfo(hypFileInfo: HYPFileInfo): RemoteFileInfo {
+    const tags: string[] = [];
+    if (hypFileInfo.meta.branch) {
+        tags.push(`branch:${hypFileInfo.meta.branch}`);
     }
-    for (const file of group.audio_pkgs) {
-        const tags = [...addtionalTags, group.version, 'audio'];
-        if (file.language) {
-            if (!audioLanguages.includes(file.language)) {
-                continue;
-            }
-            tags.push(file.language);
-        }
-        const url = new URL(file.url);
-        result.push({
-            name: url.pathname.split('/').pop() ?? file.md5,
-            size: Number(file.size),
-            required_free_space: Number(file.decompressed_size),
-            md5: file.md5,
-            url,
-            tags
-        });
+    if (hypFileInfo.meta.packageType) {
+        tags.push(`pkg:${hypFileInfo.meta.packageType}`);
     }
-    return result;
+    if (hypFileInfo.meta.version) {
+        tags.push(`ver:${hypFileInfo.meta.version}`);
+    }
+    if (hypFileInfo.meta.resourceType) {
+        tags.push(`res:${hypFileInfo.meta.resourceType}`);
+    }
+    if (hypFileInfo.meta.audioLanguage) {
+        tags.push(`lang:${hypFileInfo.meta.audioLanguage}`);
+    }
+    return {
+        name: hypFileInfo.name,
+        size: hypFileInfo.size,
+        required_free_space: hypFileInfo.required_free_space,
+        md5: hypFileInfo.md5,
+        url: hypFileInfo.url,
+        tags
+    };
+}
+
+function constructHYPFileInfo(
+    hypGamePackage: GamePackageFile,
+    meta: HYPFileInfo['meta'] = {}
+): HYPFileInfo {
+    const url = new URL(hypGamePackage.url);
+    return {
+        name: url.pathname.split('/').pop() ?? hypGamePackage.md5,
+        size: Number(hypGamePackage.size),
+        required_free_space: Number(hypGamePackage.decompressed_size),
+        md5: hypGamePackage.md5,
+        url,
+        meta
+    };
+}
+
+function parseHYPGamePackage(hypGamePackage: GamePackage): HYPFileInfo[] {
+    const result: HYPFileInfo[][] = [];
+    if (hypGamePackage.main) {
+        result.push(parseBranch(hypGamePackage.main, 'main'));
+    }
+    if (hypGamePackage.pre_download) {
+        result.push(parseBranch(hypGamePackage.pre_download, 'pre_download'));
+    }
+    return result.flat();
 }
 
 function parseBranch(
     branch: GamePackageBranch,
-    option: BranchOption,
-    audioLanguages: string[]
-): RemoteFileInfo[] {
-    const result: RemoteFileInfo[] = [];
-    if (option.major && branch.major) {
+    branchName?: HYPFileInfo['meta']['branch']
+): HYPFileInfo[] {
+    const result: HYPFileInfo[][] = [];
+    if (branch.major) {
+        result.push(parsePackageGroup(branch.major, branchName, 'major'));
+    }
+    if (branch.patches.length) {
+        const latestPatchVersion = branch.patches[0].version;
+        for (const patch of branch.patches) {
+            result.push(
+                parsePackageGroup(
+                    patch,
+                    branchName,
+                    'patch',
+                    patch.version === latestPatchVersion
+                )
+            );
+        }
+    }
+    return result.flat();
+}
+
+function parsePackageGroup(
+    group: GamePackageGroup,
+    branchName?: HYPFileInfo['meta']['branch'],
+    packageType?: HYPFileInfo['meta']['packageType'],
+    isLatestPatch?: HYPFileInfo['meta']['isLatestPatch']
+): HYPFileInfo[] {
+    const result: HYPFileInfo[] = [];
+    for (const file of group.game_pkgs) {
         result.push(
-            ...parsePackageGroup(branch.major, audioLanguages, ['major'])
+            constructHYPFileInfo(file, {
+                branch: branchName,
+                packageType,
+                isLatestPatch,
+                version: group.version,
+                resourceType: 'game'
+            })
         );
     }
-    if (option.patches) {
-        let patches: GamePackageGroup[];
-        if (option.patches === true) {
-            patches = branch.patches;
-        } else if (option.patches === 'latest-only' && branch.patches.length) {
-            patches = [branch.patches[0]];
-        } else {
-            patches = [];
-        }
+    for (const file of group.audio_pkgs) {
         result.push(
-            ...patches.flatMap((group) =>
-                parsePackageGroup(group, audioLanguages, ['patch'])
-            )
+            constructHYPFileInfo(file, {
+                branch: branchName,
+                packageType,
+                isLatestPatch,
+                resourceType: 'audio',
+                version: group.version,
+                audioLanguage: file.language
+            })
         );
     }
     return result;
 }
 
-export class HYPFileProvider implements FileProvider {
+export class HYPFileProvider {
     #updatedAt?: number;
     #fileList?: RemoteFileInfo[];
     #deprecatedFileList?: BasicFileInfo[];
 
-    constructor(
-        readonly client: HYPClient,
-        readonly option: HYPFileProviderOption
-    ) {}
+    constructor(readonly option: HYPFileProviderOption) {}
 
     get updatedAt() {
         return this.#updatedAt;
@@ -110,37 +167,53 @@ export class HYPFileProvider implements FileProvider {
         return this.#deprecatedFileList;
     }
 
-    async refresh() {
-        this.#fileList = await this.#getFileList();
+    async update(hypGamePackage: GamePackage) {
+        const fileList = await this.#getFileList(hypGamePackage);
+        if (_.isEqual(fileList, this.#fileList)) {
+            return false;
+        }
+        this.#deprecatedFileList = _.difference(this.#fileList, fileList);
+        this.#fileList = fileList;
         this.#updatedAt = Date.now();
         return true;
     }
 
-    async #getFileList() {
+    async #getFileList(hypGamePackage: GamePackage): Promise<RemoteFileInfo[]> {
+        const hypFiles = parseHYPGamePackage(hypGamePackage);
         const result: RemoteFileInfo[] = [];
-        let game_packages = await this.client.getGamePackages();
-        game_packages = game_packages.filter((game_package) =>
-            this.option.gameBizs?.includes(game_package.game.biz)
-        );
-        for (const game_package of game_packages) {
-            if (this.option.branchMain && game_package.main) {
-                result.push(
-                    ...parseBranch(
-                        game_package.main,
-                        this.option.branchMain,
-                        this.option.audioLanguages ?? []
-                    )
-                );
+        for (const hypFile of hypFiles) {
+            let branchOption: HYPFileProviderOption[
+                | 'branchMain'
+                | 'branchPreDownload'];
+            let typeOption: BranchOption['major' | 'patches'];
+            if (hypFile.meta.branch === 'main') {
+                branchOption = this.option.branchMain;
+            } else if (hypFile.meta.branch === 'pre_download') {
+                branchOption = this.option.branchPreDownload;
             }
-            if (this.option.branchPreDownload && game_package.pre_download) {
-                result.push(
-                    ...parseBranch(
-                        game_package.pre_download,
-                        this.option.branchPreDownload,
-                        this.option.audioLanguages ?? []
-                    )
-                );
+            if (!branchOption) {
+                continue;
             }
+            if (hypFile.meta.packageType === 'major') {
+                typeOption = branchOption.major;
+            } else if (hypFile.meta.packageType === 'patch') {
+                typeOption = branchOption.patches;
+            }
+            if (
+                !(typeOption === true) &&
+                !(typeOption === 'latest-only' && hypFile.meta.isLatestPatch)
+            ) {
+                continue;
+            }
+            if (
+                hypFile.meta.audioLanguage &&
+                !this.option.audioLanguages?.includes(
+                    hypFile.meta.audioLanguage
+                )
+            ) {
+                continue;
+            }
+            result.push(constructRemoteFileInfo(hypFile));
         }
         return result;
     }
