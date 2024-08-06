@@ -14,7 +14,7 @@ import {
 } from './type.js';
 import { Aria2 } from './storage/aria2.js';
 import { HYPClient, KnownLauncherId } from './hyp/client.js';
-import { HYPFilerProvider } from './hyp/provider.js';
+import { HYPFileProvider } from './hyp/provider.js';
 
 const client = new HYPClient(KnownLauncherId.miHoYoLauncher);
 
@@ -23,7 +23,7 @@ const PROVIDERS = [
         displayName: '崩坏3（bh3_cn）',
         gameFilter: ['main.major', 'pre_download.major'],
         langFilter: ['zh-cn'],
-        takumi: new HYPFilerProvider(client, {
+        takumi: new HYPFileProvider(client, {
             gameBizs: ['bh3_cn'],
             audioLanguages: ['zh-cn'],
             branchMain: {
@@ -43,7 +43,7 @@ const PROVIDERS = [
             'pre_download.patches (latest-only)'
         ],
         langFilter: ['zh-cn'],
-        takumi: new HYPFilerProvider(client, {
+        takumi: new HYPFileProvider(client, {
             gameBizs: ['hk4e_cn'],
             audioLanguages: ['zh-cn'],
             branchMain: {
@@ -63,7 +63,7 @@ const PROVIDERS = [
             'pre_download.patches (latest-only)'
         ],
         langFilter: ['zh-cn'],
-        takumi: new HYPFilerProvider(client, {
+        takumi: new HYPFileProvider(client, {
             gameBizs: ['hkrpg_cn'],
             audioLanguages: ['zh-cn'],
             branchMain: {
@@ -83,7 +83,7 @@ const PROVIDERS = [
             'pre_download.patches (latest-only)'
         ],
         langFilter: ['zh-cn'],
-        takumi: new HYPFilerProvider(client, {
+        takumi: new HYPFileProvider(client, {
             gameBizs: ['nap_cn'],
             audioLanguages: ['zh-cn'],
             branchMain: {

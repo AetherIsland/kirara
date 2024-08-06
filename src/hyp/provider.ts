@@ -88,7 +88,7 @@ function parseBranch(
     return result;
 }
 
-export class HYPFilerProvider implements FileProvider {
+export class HYPFileProvider implements FileProvider {
     #updatedAt?: number;
     #fileList?: RemoteFileInfo[];
     #deprecatedFileList?: BasicFileInfo[];
