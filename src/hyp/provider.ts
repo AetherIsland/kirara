@@ -13,7 +13,7 @@ import {
 
 type HYPFileInfo = {
     name: string;
-    url: URL;
+    url: string;
     size: number;
     required_free_space: number;
     md5: string;
@@ -71,11 +71,11 @@ function constructHYPFileInfo(
 ): HYPFileInfo {
     const url = new URL(hypGamePackage.url);
     return {
-        name: url.pathname.split('/').pop() ?? hypGamePackage.md5,
+        name: url.pathname.split('/').pop() || hypGamePackage.md5,
         size: Number(hypGamePackage.size),
         required_free_space: Number(hypGamePackage.decompressed_size),
         md5: hypGamePackage.md5,
-        url,
+        url: hypGamePackage.url,
         meta
     };
 }

@@ -81,7 +81,7 @@ export class Local implements FileStorage {
         const { dirPath: dlDir, filePath } = this.#getAbsolutePath(remoteFile);
         await doSthIgnoreErrs(['EEXIST'], () => fsPromises.mkdir(dlDir));
         await this.#setFileStatus(remoteFile, FileStatus.DOWNLOADING);
-        const dl = new DownloaderHelper(remoteFile.url.href, dlDir, {
+        const dl = new DownloaderHelper(remoteFile.url, dlDir, {
             resumeIfFileExists: true,
             fileName: remoteFile.name,
             override: {

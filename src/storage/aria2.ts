@@ -77,7 +77,7 @@ export class Aria2 implements FileStorage {
                 dirPath,
                 '-o',
                 remoteFile.name,
-                remoteFile.url.href
+                remoteFile.url
             ],
             { stdio: 'ignore' }
         );

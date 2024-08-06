@@ -8,7 +8,7 @@ export type RemoteFileInfo = {
     size: number;
     required_free_space: number;
     md5: string; // TODO: check format
-    url: URL;
+    url: string;
     tags: string[];
 };
 
