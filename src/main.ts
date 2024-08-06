@@ -13,7 +13,7 @@ import {
     type RemoteFileInfo
 } from './type.js';
 import { Aria2 } from './storage/aria2.js';
-import { HYPClient, KnownLauncherId } from './hyp/client.js';
+import { HYPClient, KnownGameId, KnownLauncherId } from './hyp/client.js';
 import { HYPFileProvider } from './hyp/provider.js';
 
 const client = new HYPClient(KnownLauncherId.miHoYoLauncher);
@@ -21,10 +21,10 @@ const client = new HYPClient(KnownLauncherId.miHoYoLauncher);
 const PROVIDERS = [
     {
         displayName: '崩坏3（bh3_cn）',
+        gameId: KnownGameId.bh3_cn,
         gameFilter: ['main.major', 'pre_download.major'],
-        langFilter: ['zh-cn'],
-        takumi: new HYPFileProvider(client, {
-            gameBizs: ['bh3_cn'],
+        langFilter: ['lang:zh-cn'],
+        fileProvider: new HYPFileProvider({
             audioLanguages: ['zh-cn'],
             branchMain: {
                 major: true,
@@ -38,13 +38,13 @@ const PROVIDERS = [
     },
     {
         displayName: '原神（hk4e_cn）',
+        gameId: KnownGameId.hk4e_cn,
         gameFilter: [
             'main.patches (latest-only)',
             'pre_download.patches (latest-only)'
         ],
-        langFilter: ['zh-cn'],
-        takumi: new HYPFileProvider(client, {
-            gameBizs: ['hk4e_cn'],
+        langFilter: ['lang:zh-cn'],
+        fileProvider: new HYPFileProvider({
             audioLanguages: ['zh-cn'],
             branchMain: {
                 major: false,
@@ -58,13 +58,13 @@ const PROVIDERS = [
     },
     {
         displayName: '崩坏：星穹铁道（hkrpg_cn）',
+        gameId: KnownGameId.hkrpg_cn,
         gameFilter: [
             'main.patches (latest-only)',
             'pre_download.patches (latest-only)'
         ],
-        langFilter: ['zh-cn'],
-        takumi: new HYPFileProvider(client, {
-            gameBizs: ['hkrpg_cn'],
+        langFilter: ['lang:zh-cn'],
+        fileProvider: new HYPFileProvider({
             audioLanguages: ['zh-cn'],
             branchMain: {
                 major: false,
@@ -78,13 +78,13 @@ const PROVIDERS = [
     },
     {
         displayName: '绝区零（nap_cn）',
+        gameId: KnownGameId.nap_cn,
         gameFilter: [
             'main.patches (latest-only)',
             'pre_download.patches (latest-only)'
         ],
-        langFilter: ['zh-cn'],
-        takumi: new HYPFileProvider(client, {
-            gameBizs: ['nap_cn'],
+        langFilter: ['lang:zh-cn'],
+        fileProvider: new HYPFileProvider({
             audioLanguages: ['zh-cn'],
             branchMain: {
                 major: false,
@@ -157,12 +157,17 @@ async function syncStorage(storage: FileStorage, fileList?: RemoteFileInfo[]) {
 
 async function sync() {
     let status = []; // TODO: typing
-    for (const { takumi, ...rest } of PROVIDERS) {
+    const res = await client.getGamePackages(PROVIDERS.map((p) => p.gameId));
+    for (const { fileProvider, gameId, ...rest } of PROVIDERS) {
         console.log('正在刷新 Takumi');
         try {
-            if (await takumi.refresh()) {
+            const gamePackages = res.find((r) => r.game.id === gameId);
+            if (gamePackages && (await fileProvider.update(gamePackages))) {
                 console.log('Takumi 已更新');
-                await removeDeprecatedFiles(STORAGE, takumi.deprecatedFileList);
+                await removeDeprecatedFiles(
+                    STORAGE,
+                    fileProvider.deprecatedFileList
+                );
             }
         } catch (err) {
             console.log('刷新 Takumi 时发生错误', err);
@@ -170,8 +175,8 @@ async function sync() {
         try {
             status.push({
                 ...rest,
-                updatedAt: takumi.updatedAt,
-                files: await syncStorage(STORAGE, takumi.fileList)
+                updatedAt: fileProvider.updatedAt,
+                files: await syncStorage(STORAGE, fileProvider.fileList)
             });
         } catch (err) {
             console.log('同步存储时发生错误', err);
