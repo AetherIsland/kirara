@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import { isEqual, difference } from 'es-toolkit';
 
 import {
     type BasicFileInfo,
@@ -150,8 +150,8 @@ function parsePackageGroup(
 
 export class HYPFileProvider {
     #updatedAt?: number;
-    #fileList?: RemoteFileInfo[];
-    #deprecatedFileList?: BasicFileInfo[];
+    #fileList: RemoteFileInfo[] = [];
+    #deprecatedFileList: BasicFileInfo[] = [];
 
     constructor(readonly option: HYPFileProviderOption) {}
 
@@ -169,10 +169,10 @@ export class HYPFileProvider {
 
     async update(hypGamePackage: GamePackage) {
         const fileList = await this.#getFileList(hypGamePackage);
-        if (_.isEqual(fileList, this.#fileList)) {
+        if (isEqual(fileList, this.#fileList)) {
             return false;
         }
-        this.#deprecatedFileList = _.difference(this.#fileList, fileList);
+        this.#deprecatedFileList = difference(this.#fileList, fileList);
         this.#fileList = fileList;
         this.#updatedAt = Date.now();
         return true;
