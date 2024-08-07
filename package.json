@@ -23,6 +23,7 @@
     "node-downloader-helper": "^2.1.9"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
@@ -31,6 +32,8 @@
     "@types/node": "^22.1.0",
     "prettier": "^3.3.3",
     "rollup": "^4.20.0",
+    "rollup-plugin-progress": "^1.1.2",
+    "rollup-plugin-sizes": "^1.0.6",
     "tslib": "^2.6.3",
     "typescript": "^5.5.4"
   }
