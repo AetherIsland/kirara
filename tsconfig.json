@@ -3,8 +3,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
-    "sourceMap": true,
-    "verbatimModuleSyntax": true
+    "sourceMap": true
   },
   "extends": "@tsconfig/node-lts/tsconfig.json"
 }
