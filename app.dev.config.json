@@ -1,0 +1,44 @@
+{
+    "statusFile": "/tmp/kirara-test/status.json",
+    "storage": {
+        "type": "dummy"
+    },
+    "tasks": [
+        {
+            "launcher": {
+                "type": "miHoYoLauncher",
+                "language": "zh-cn"
+            },
+            "filters": [
+                {
+                    "matchGameBiz": "bh3_cn",
+                    "audioLanguages": [
+                        "zh-cn"
+                    ],
+                    "branchMain": {
+                        "major": true,
+                        "patches": true
+                    },
+                    "branchPreDownload": {
+                        "major": true,
+                        "patches": true
+                    }
+                },
+                {
+                    "matchGameBiz": "*",
+                    "audioLanguages": [
+                        "zh-cn"
+                    ],
+                    "branchMain": {
+                        "major": false,
+                        "patches": "latest-only"
+                    },
+                    "branchPreDownload": {
+                        "major": false,
+                        "patches": "latest-only"
+                    }
+                }
+            ]
+        }
+    ]
+}
