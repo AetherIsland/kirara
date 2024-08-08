@@ -1,7 +1,8 @@
 import * as fsPromises from 'node:fs/promises';
 import * as timers from 'node:timers';
 import * as path from 'node:path';
-import { createHash } from 'node:crypto';
+
+import { isEqual } from 'es-toolkit';
 
 import { Dummy } from './storage/dummy.js';
 import { Local } from './storage/local.js';
@@ -14,6 +15,8 @@ import {
     type BasicFileInfo,
     type FileStorage,
     type PublicFileInfo,
+    type PublicStatus,
+    type PublicStatusGame,
     type RemoteFileInfo
 } from './type.js';
 import { Aria2 } from './storage/aria2.js';
@@ -32,8 +35,7 @@ const LauncherIdMap = new Map<string, KnownLauncherId>([
     ['BilibiliZZZ', KnownLauncherId.BilibiliZZZ]
 ]);
 
-let publicStatus; // TODO: typing
-let publicStatusHash: string;
+let publicStatus: PublicStatus;
 
 async function loadConfig(path: Parameters<typeof fsPromises.readFile>[0]) {
     const configText = await fsPromises.readFile(path, 'utf8');
@@ -191,8 +193,8 @@ async function syncStorage(storage: FileStorage, fileList?: RemoteFileInfo[]) {
 }
 
 async function executeTask(task: AppTask) {
-    const statusGames = [];
-    const promises = [];
+    const promisesRemove: Promise<void>[] = [];
+    const promisesSync: Promise<PublicStatusGame>[] = [];
     console.log('正在刷新启动器', task.client.launcher_id);
     const gamePackages = await task.client.getGamePackages(
         task.games.map((game) => game.id)
@@ -212,41 +214,41 @@ async function executeTask(task: AppTask) {
         }
         console.log('正在处理游戏', game.id, game.biz, game.display.name);
         game.provider.update(gamePackage);
-        const statusGame = {
-            gameBiz: game.biz,
-            gameName: game.display.name,
-            updatedAt: game.provider.updatedAt
-        };
-        statusGames.push(statusGame);
-        promises.push(
+        promisesRemove.push(
             removeDeprecatedFiles(
                 task.storage,
                 game.provider.deprecatedFileList
             )
         );
-        promises.push(
+        promisesSync.push(
             syncStorage(task.storage, game.provider.fileList).then(
-                (publicFileInfos) => {
-                    // @ts-expect-error
-                    statusGame.files = publicFileInfos;
-                }
+                (publicFileInfos) => ({
+                    launcherId: task.client.launcher_id,
+                    gameId: game.id,
+                    gameBiz: game.biz,
+                    gameName: game.display.name,
+                    updatedAt: game.provider.updatedAt,
+                    files: publicFileInfos
+                })
             )
         );
     }
-    await Promise.all(promises);
-    return statusGames;
+    await Promise.all(promisesRemove);
+    return await Promise.all(promisesSync);
 }
 
 async function sync() {
     const promises = tasks.map((task) => executeTask(task));
-    const status = (await Promise.all(promises)).flat();
-    const json = JSON.stringify(status);
-    const hash = createHash('md5').update(json).digest('hex');
-    if (hash !== publicStatusHash) {
+    const status: PublicStatus = {
+        games: (await Promise.all(promises)).flat()
+    };
+    if (!isEqual(status, publicStatus)) {
         publicStatus = status;
-        publicStatusHash = hash;
         if (config.statusFile) {
-            await fsPromises.writeFile(config.statusFile, json);
+            await fsPromises.writeFile(
+                config.statusFile,
+                JSON.stringify(status)
+            );
         }
     }
 }

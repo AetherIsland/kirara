@@ -33,6 +33,19 @@ export type StoragedFileInfo = {
 
 export type PublicFileInfo = RemoteFileInfo & StoragedFileInfo;
 
+export type PublicStatus = {
+    games: PublicStatusGame[];
+};
+
+export type PublicStatusGame = {
+    launcherId: HYPClient['launcher_id'];
+    gameId: GameInfo['id'];
+    gameBiz: GameInfo['biz'];
+    gameName: GameInfo['display']['name'];
+    updatedAt: HYPFileProvider['updatedAt'];
+    files: PublicFileInfo[];
+};
+
 export interface FileStorage {
     getFileInfo(file: BasicFileInfo): Promise<StoragedFileInfo>;
     removeFile(file: BasicFileInfo): Promise<void>;
