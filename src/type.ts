@@ -1,3 +1,5 @@
+import { type HYPFileProviderOption } from './hyp/provider.js';
+
 export type BasicFileInfo = {
     name: string;
     md5: string; // TODO: check format
@@ -31,3 +33,27 @@ export interface FileStorage {
     removeFile(file: BasicFileInfo): Promise<void>;
     downloadRemoteFile(remoteFile: RemoteFileInfo): Promise<void>;
 }
+
+export type AppConfig = {
+    statusFile?: string;
+    storage: {
+        type: string;
+        root?: string;
+        url?: string;
+    };
+    tasks: AppConfigTask[];
+};
+
+export type AppConfigTask = {
+    launcher: {
+        type: string;
+        language?: string;
+        channel?: string;
+        subChannel?: string;
+    };
+    filters: AppConfigGameFilter[];
+};
+
+export type AppConfigGameFilter = {
+    matchGameBiz: string;
+} & HYPFileProviderOption;

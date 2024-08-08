@@ -113,6 +113,40 @@ const PUBLIC_STATUS_FILE_PATH = BASE_DIR + '/status.json';
 let publicStatus; // TODO: typing
 let publicStatusHash: string;
 
+async function loadConfig(path: Parameters<typeof fsPromises.readFile>[0]) {
+    const configText = await fsPromises.readFile(path, 'utf8');
+    const config: AppConfig = JSON.parse(configText);
+    const errors = [];
+    if (typeof config.storage?.type !== 'string') {
+        errors.push('storage.type');
+    }
+    if (Array.isArray(config.tasks)) {
+        for (let i = 0; i < config.tasks.length; ++i) {
+            const task = config.tasks[i];
+            if (typeof task.launcher.type !== 'string') {
+                errors.push(`tasks[${i}].launcher.type`);
+            }
+            if (Array.isArray(task.filters)) {
+                for (let j = 0; j < task.filters.length; ++j) {
+                    const filter = task.filters[j];
+                    if (typeof filter.matchGameBiz !== 'string') {
+                        errors.push(`tasks[${i}].filters[${j}].matchGameBiz`);
+                    }
+                }
+            } else {
+                errors.push(`tasks[${i}].filters`);
+            }
+        }
+    } else {
+        errors.push('tasks');
+    }
+    if (errors.length) {
+        console.error('缺少必要配置', errors);
+        throw new Error('配置文件格式错误');
+    }
+    return config;
+}
+
 async function removeDeprecatedFiles(
     storage: FileStorage,
     deprecatedFileList?: BasicFileInfo[]
