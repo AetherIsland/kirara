@@ -1,5 +1,6 @@
 import * as fsPromises from 'node:fs/promises';
 import * as timers from 'node:timers';
+import * as path from 'node:path';
 import { createHash } from 'node:crypto';
 
 import { Dummy } from './storage/dummy.js';
@@ -7,109 +8,30 @@ import { Local } from './storage/local.js';
 import { doSthIgnoreErrs } from './utils.js';
 import {
     FileStatus,
+    type AppConfig,
+    type AppTask,
+    type AppTaskGame,
     type BasicFileInfo,
     type FileStorage,
     type PublicFileInfo,
     type RemoteFileInfo
 } from './type.js';
 import { Aria2 } from './storage/aria2.js';
-import { HYPClient, KnownGameId, KnownLauncherId } from './hyp/client.js';
+import {
+    getChannelByLauncherId,
+    HYPClient,
+    KnownLauncherId
+} from './hyp/client.js';
 import { HYPFileProvider } from './hyp/provider.js';
 
-const client = new HYPClient(KnownLauncherId.miHoYoLauncher);
+const LauncherIdMap = new Map<string, KnownLauncherId>([
+    ['miHoYoLauncher', KnownLauncherId.miHoYoLauncher],
+    ['HoYoPlay', KnownLauncherId.HoYoPlay],
+    ['BilibiliGenshin', KnownLauncherId.BilibiliGenshin],
+    ['BilibiliStarRail', KnownLauncherId.BilibiliStarRail],
+    ['BilibiliZZZ', KnownLauncherId.BilibiliZZZ]
+]);
 
-const PROVIDERS = [
-    {
-        displayName: '崩坏3（bh3_cn）',
-        gameId: KnownGameId.bh3_cn,
-        gameFilter: ['main.major', 'pre_download.major'],
-        langFilter: ['lang:zh-cn'],
-        fileProvider: new HYPFileProvider({
-            audioLanguages: ['zh-cn'],
-            branchMain: {
-                major: true,
-                patches: false
-            },
-            branchPreDownload: {
-                major: true,
-                patches: false
-            }
-        })
-    },
-    {
-        displayName: '原神（hk4e_cn）',
-        gameId: KnownGameId.hk4e_cn,
-        gameFilter: [
-            'main.patches (latest-only)',
-            'pre_download.patches (latest-only)'
-        ],
-        langFilter: ['lang:zh-cn'],
-        fileProvider: new HYPFileProvider({
-            audioLanguages: ['zh-cn'],
-            branchMain: {
-                major: false,
-                patches: 'latest-only'
-            },
-            branchPreDownload: {
-                major: false,
-                patches: 'latest-only'
-            }
-        })
-    },
-    {
-        displayName: '崩坏：星穹铁道（hkrpg_cn）',
-        gameId: KnownGameId.hkrpg_cn,
-        gameFilter: [
-            'main.patches (latest-only)',
-            'pre_download.patches (latest-only)'
-        ],
-        langFilter: ['lang:zh-cn'],
-        fileProvider: new HYPFileProvider({
-            audioLanguages: ['zh-cn'],
-            branchMain: {
-                major: false,
-                patches: 'latest-only'
-            },
-            branchPreDownload: {
-                major: false,
-                patches: 'latest-only'
-            }
-        })
-    },
-    {
-        displayName: '绝区零（nap_cn）',
-        gameId: KnownGameId.nap_cn,
-        gameFilter: [
-            'main.patches (latest-only)',
-            'pre_download.patches (latest-only)'
-        ],
-        langFilter: ['lang:zh-cn'],
-        fileProvider: new HYPFileProvider({
-            audioLanguages: ['zh-cn'],
-            branchMain: {
-                major: false,
-                patches: 'latest-only'
-            },
-            branchPreDownload: {
-                major: false,
-                patches: 'latest-only'
-            }
-        })
-    }
-];
-
-const BASE_DIR = '/tmp/kirara-test';
-const STORAGE_DIR = BASE_DIR + '/files';
-const PUBLIC_URL = 'http://example.com/files/';
-await doSthIgnoreErrs(['EEXIST'], () =>
-    fsPromises.mkdir(STORAGE_DIR, { recursive: true })
-);
-// const STORAGE = new Local(STORAGE_DIR, PUBLIC_URL);
-const STORAGE = new Aria2(STORAGE_DIR, PUBLIC_URL);
-
-// const STORAGE = new Dummy();
-
-const PUBLIC_STATUS_FILE_PATH = BASE_DIR + '/status.json';
 let publicStatus; // TODO: typing
 let publicStatusHash: string;
 
@@ -145,6 +67,85 @@ async function loadConfig(path: Parameters<typeof fsPromises.readFile>[0]) {
         throw new Error('配置文件格式错误');
     }
     return config;
+}
+
+async function init(config: AppConfig) {
+    let storage: FileStorage;
+    const tasks: AppTask[] = [];
+    await doSthIgnoreErrs(['EEXIST'], async () => {
+        if (config.statusFile) {
+            await fsPromises.mkdir(path.dirname(config.statusFile), {
+                recursive: true
+            });
+        }
+    });
+    await doSthIgnoreErrs(['EEXIST'], async () => {
+        if (config.storage.root) {
+            await fsPromises.mkdir(config.storage.root, { recursive: true });
+        }
+    });
+    switch (config.storage.type) {
+        case 'dummy':
+            storage = new Dummy();
+            break;
+        case 'local':
+            if (!config.storage.root) {
+                throw new Error('存储 Local 需要配置 storage.root');
+            }
+            storage = new Local(config.storage.root, config.storage.url);
+            break;
+        case 'aria2':
+            if (!config.storage.root) {
+                throw new Error('存储 Aria2 需要配置 storage.root');
+            }
+            storage = new Aria2(config.storage.root, config.storage.url);
+            break;
+        default:
+            throw new Error('未知存储类型');
+    }
+    for (const taskConfig of config.tasks) {
+        const launcherId = LauncherIdMap.get(taskConfig.launcher.type);
+        if (!launcherId) {
+            throw new Error('未知启动器类型');
+        }
+        const defaultChannel = getChannelByLauncherId(launcherId);
+        const client = new HYPClient(launcherId, {
+            language: taskConfig.launcher.language,
+            channel: taskConfig.launcher.channel || defaultChannel.channel,
+            sub_channel:
+                taskConfig.launcher.subChannel || defaultChannel.sub_channel
+        });
+        const gameFilterMap = new Map();
+        for (const filter of taskConfig.filters) {
+            if (gameFilterMap.has(filter.matchGameBiz)) {
+                throw new Error('游戏过滤器重复');
+            }
+            gameFilterMap.set(filter.matchGameBiz, filter);
+        }
+        const taskGames: AppTaskGame[] = [];
+        for (const game of await client.getGames()) {
+            const gameFilter =
+                gameFilterMap.get(game.biz) ?? gameFilterMap.get('*');
+            if (gameFilter) {
+                taskGames.push({
+                    id: game.id,
+                    biz: game.biz,
+                    display: game.display,
+                    provider: new HYPFileProvider({
+                        audioLanguages: gameFilter.audioLanguages,
+                        branchMain: gameFilter.branchMain,
+                        branchPreDownload: gameFilter.branchPreDownload
+                    })
+                });
+            }
+        }
+        tasks.push({
+            client,
+            storage,
+            games: taskGames
+        });
+    }
+    return tasks;
 }
 
 async function removeDeprecatedFiles(
@@ -189,42 +190,68 @@ async function syncStorage(storage: FileStorage, fileList?: RemoteFileInfo[]) {
     return publicFileInfos;
 }
 
-async function sync() {
-    let status = []; // TODO: typing
-    const res = await client.getGamePackages(PROVIDERS.map((p) => p.gameId));
-    for (const { fileProvider, gameId, ...rest } of PROVIDERS) {
-        console.log('正在刷新 Takumi');
-        try {
-            const gamePackages = res.find((r) => r.game.id === gameId);
-            if (gamePackages && (await fileProvider.update(gamePackages))) {
-                console.log('Takumi 已更新');
-                await removeDeprecatedFiles(
-                    STORAGE,
-                    fileProvider.deprecatedFileList
-                );
-            }
-        } catch (err) {
-            console.log('刷新 Takumi 时发生错误', err);
+async function executeTask(task: AppTask) {
+    const statusGames = [];
+    const promises = [];
+    console.log('正在刷新启动器', task.client.launcher_id);
+    const gamePackages = await task.client.getGamePackages(
+        task.games.map((game) => game.id)
+    );
+    for (const game of task.games) {
+        const gamePackage = gamePackages.find(
+            (gamePackage) => gamePackage.game.id === game.id
+        );
+        if (!gamePackage) {
+            console.error(
+                '启动器 API 没有返回期望的游戏',
+                game.id,
+                game.biz,
+                game.display.name
+            );
+            continue;
         }
-        try {
-            status.push({
-                ...rest,
-                updatedAt: fileProvider.updatedAt,
-                files: await syncStorage(STORAGE, fileProvider.fileList)
-            });
-        } catch (err) {
-            console.log('同步存储时发生错误', err);
-        }
+        console.log('正在处理游戏', game.id, game.biz, game.display.name);
+        game.provider.update(gamePackage);
+        const statusGame = {
+            gameBiz: game.biz,
+            gameName: game.display.name,
+            updatedAt: game.provider.updatedAt
+        };
+        statusGames.push(statusGame);
+        promises.push(
+            removeDeprecatedFiles(
+                task.storage,
+                game.provider.deprecatedFileList
+            )
+        );
+        promises.push(
+            syncStorage(task.storage, game.provider.fileList).then(
+                (publicFileInfos) => {
+                    // @ts-expect-error
+                    statusGame.files = publicFileInfos;
+                }
+            )
+        );
     }
-    debugger;
+    await Promise.all(promises);
+    return statusGames;
+}
+
+async function sync() {
+    const promises = tasks.map((task) => executeTask(task));
+    const status = (await Promise.all(promises)).flat();
     const json = JSON.stringify(status);
     const hash = createHash('md5').update(json).digest('hex');
     if (hash !== publicStatusHash) {
         publicStatus = status;
         publicStatusHash = hash;
-        await fsPromises.writeFile(PUBLIC_STATUS_FILE_PATH, json);
+        if (config.statusFile) {
+            await fsPromises.writeFile(config.statusFile, json);
+        }
     }
 }
 
+const config = await loadConfig('app.config.json');
+const tasks = await init(config);
 timers.setInterval(sync, 60_000);
 timers.setImmediate(sync);

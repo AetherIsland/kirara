@@ -56,6 +56,29 @@ export function getLauncherIdByGameId(gameId: string) {
 }
 
 /**
+ * 获取启动器对应的渠道信息
+ */
+export function getChannelByLauncherId(launcherId: string) {
+    switch (launcherId) {
+        case KnownLauncherId.miHoYoLauncher:
+        case KnownLauncherId.HoYoPlay:
+            return {
+                channel: '1',
+                sub_channel: '1'
+            };
+        case KnownLauncherId.BilibiliGenshin:
+        case KnownLauncherId.BilibiliStarRail:
+        case KnownLauncherId.BilibiliZZZ:
+            return {
+                channel: '14',
+                sub_channel: '0'
+            };
+        default:
+            throw new Error(`Unknown LauncherId: ${launcherId}`);
+    }
+}
+
+/**
  * 获取启动器对应的 API 基址
  */
 export function getAPIBaseByLauncherId(launcherId: string) {

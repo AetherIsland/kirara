@@ -1,3 +1,5 @@
+import * as path from 'node:path';
+
 import { isEqual, difference } from 'es-toolkit';
 
 import {
@@ -71,7 +73,7 @@ function constructHYPFileInfo(
 ): HYPFileInfo {
     const url = new URL(hypGamePackage.url);
     return {
-        name: url.pathname.split('/').pop() || hypGamePackage.md5,
+        name: path.basename(url.pathname) || hypGamePackage.md5,
         size: Number(hypGamePackage.size),
         required_free_space: Number(hypGamePackage.decompressed_size),
         md5: hypGamePackage.md5,
@@ -80,7 +82,7 @@ function constructHYPFileInfo(
     };
 }
 
-function parseHYPGamePackage(hypGamePackage: GamePackage): HYPFileInfo[] {
+function parseHYPGamePackage(hypGamePackage: GamePackage) {
     const result: HYPFileInfo[][] = [];
     if (hypGamePackage.main) {
         result.push(parseBranch(hypGamePackage.main, 'main'));
@@ -94,7 +96,7 @@ function parseHYPGamePackage(hypGamePackage: GamePackage): HYPFileInfo[] {
 function parseBranch(
     branch: GamePackageBranch,
     branchName?: HYPFileInfo['meta']['branch']
-): HYPFileInfo[] {
+) {
     const result: HYPFileInfo[][] = [];
     if (branch.major) {
         result.push(parsePackageGroup(branch.major, branchName, 'major'));
@@ -120,7 +122,7 @@ function parsePackageGroup(
     branchName?: HYPFileInfo['meta']['branch'],
     packageType?: HYPFileInfo['meta']['packageType'],
     isLatestPatch?: HYPFileInfo['meta']['isLatestPatch']
-): HYPFileInfo[] {
+) {
     const result: HYPFileInfo[] = [];
     for (const file of group.game_pkgs) {
         result.push(
@@ -167,8 +169,8 @@ export class HYPFileProvider {
         return this.#deprecatedFileList;
     }
 
-    async update(hypGamePackage: GamePackage) {
-        const fileList = await this.#getFileList(hypGamePackage);
+    update(hypGamePackage: GamePackage) {
+        const fileList = this.#getFileList(hypGamePackage);
         if (isEqual(fileList, this.#fileList)) {
             return false;
         }
@@ -178,7 +180,7 @@ export class HYPFileProvider {
         return true;
     }
 
-    async #getFileList(hypGamePackage: GamePackage): Promise<RemoteFileInfo[]> {
+    #getFileList(hypGamePackage: GamePackage) {
         const hypFiles = parseHYPGamePackage(hypGamePackage);
         const result: RemoteFileInfo[] = [];
         for (const hypFile of hypFiles) {
