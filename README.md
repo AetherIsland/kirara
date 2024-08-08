@@ -127,3 +127,9 @@
 | 原神 | `hk4e_cn` | `T2S0Gz4Dr2` | `BilibiliGenshin` | `umfgRO5gh5` |
 | 崩坏：星穹铁道 | `hkrpg_cn` | `EdtUqXfCHh` | `BilibiliStarRail` | `6P5gHMNyK3` |
 | 绝区零 | `nap_cn` | `HXAFlmYa17` | `BilibiliZZZ` | `xV0f4r1GT0` |
+
+## 许可
+
+此项目使用 [MIT 许可](LICENSE)。阅读[《逐行解读 MIT 许可证》](https://linux.cn/article-13180-1.html)了解更多。
+
+设计 HYP 模块时参考了 [YuehaiTeam/cocogoat](https://github.com/YuehaiTeam/cocogoat) 和 [Scighost/Starward](https://github.com/Scighost/Starward) 两个项目的代码，在此感谢这些项目的作者和贡献者。
