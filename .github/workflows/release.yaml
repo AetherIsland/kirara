@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm run build:rollup --entryFileNames 'kirara-${{ github.event.release.tag_name }}.mjs'
+      - run: echo * | xargs -n 1 zstd --rm -19
+        working-directory: dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
