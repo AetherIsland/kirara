@@ -1,6 +1,6 @@
 import * as path from 'node:path';
 
-import { isEqual, difference } from 'es-toolkit';
+import { isEqual, differenceWith } from 'es-toolkit';
 
 import {
     type BasicFileInfo,
@@ -174,7 +174,11 @@ export class HYPFileProvider {
         if (isEqual(fileList, this.#fileList)) {
             return false;
         }
-        this.#deprecatedFileList = difference(this.#fileList, fileList);
+        this.#deprecatedFileList = differenceWith(
+            this.#fileList,
+            fileList,
+            (x, y) => x.url === y.url && x.md5 === y.md5
+        );
         this.#fileList = fileList;
         this.#updatedAt = Date.now();
         return true;
