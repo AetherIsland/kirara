@@ -238,18 +238,22 @@ async function executeTask(task: AppTask) {
 }
 
 async function sync() {
-    const promises = tasks.map((task) => executeTask(task));
-    const status: PublicStatus = {
-        games: (await Promise.all(promises)).flat()
-    };
-    if (!isEqual(status, publicStatus)) {
-        publicStatus = status;
-        if (config.statusFile) {
-            await fsPromises.writeFile(
-                config.statusFile,
-                JSON.stringify(status)
-            );
+    try {
+        const promises = tasks.map((task) => executeTask(task));
+        const status: PublicStatus = {
+            games: (await Promise.all(promises)).flat()
+        };
+        if (!isEqual(status, publicStatus)) {
+            publicStatus = status;
+            if (config.statusFile) {
+                await fsPromises.writeFile(
+                    config.statusFile,
+                    JSON.stringify(status)
+                );
+            }
         }
+    } catch (err) {
+        console.error('同步时发生错误', err);
     }
 }
 
