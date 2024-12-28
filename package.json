@@ -15,6 +15,7 @@
     "start": "node .",
     "build:tsc": "tsc",
     "build:rollup": "rollup -c",
+    "build:rolldown": "rolldown -c",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write src/"
   },
@@ -30,6 +31,7 @@
     "@tsconfig/node-lts": "^22.0.1",
     "@types/node": "^22.10.2",
     "prettier": "^3.4.2",
+    "rolldown": "1.0.0-beta.1",
     "rollup": "^4.29.1",
     "rollup-plugin-progress": "^1.1.2",
     "rollup-plugin-sizes": "^1.0.6",
