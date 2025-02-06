@@ -1,22 +1,18 @@
 {
-  "name": "kirara",
-  "version": "0.1.3",
-  "description": "",
-  "keywords": [],
-  "homepage": "https://github.com/AetherIsland/kirara#readme",
-  "bugs": {
-    "url": "https://github.com/AetherIsland/kirara/issues"
-  },
-  "license": "MIT",
-  "main": "dist/main.js",
+  "name": "@aetherisland/kirara",
   "type": "module",
+  "version": "0.1.3",
+  "description": "A tool for automating the downloading and management of packages for miHoYo PC games",
+  "license": "MIT",
+  "homepage": "https://github.com/AetherIsland/kirara",
+  "bugs": "https://github.com/AetherIsland/kirara/issues",
   "repository": "github:AetherIsland/kirara",
+  "main": "dist/main.js",
   "scripts": {
     "start": "node .",
     "build:tsc": "tsc",
     "build:rollup": "rollup -c",
     "build:rolldown": "rolldown -c",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write src/"
   },
   "dependencies": {
