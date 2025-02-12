@@ -1,17 +1,9 @@
 import * as path from 'node:path';
 
-import { isEqual, differenceWith } from 'es-toolkit';
+import { differenceWith, isEqual } from 'es-toolkit';
 
-import {
-    type BasicFileInfo,
-    type RemoteFileInfo
-} from '../type.js';
-import {
-    type GamePackageGroup,
-    type GamePackageBranch,
-    type GamePackage,
-    type GamePackageFile
-} from './GamePackage.js';
+import { type BasicFileInfo, type RemoteFileInfo } from '../type.js';
+import { type GamePackage, type GamePackageBranch, type GamePackageFile, type GamePackageGroup } from './GamePackage.js';
 
 type HYPFileInfo = {
     name: string;
@@ -67,10 +59,7 @@ function constructRemoteFileInfo(hypFileInfo: HYPFileInfo): RemoteFileInfo {
     };
 }
 
-function constructHYPFileInfo(
-    hypGamePackage: GamePackageFile,
-    meta: HYPFileInfo['meta'] = {}
-): HYPFileInfo {
+function constructHYPFileInfo(hypGamePackage: GamePackageFile, meta: HYPFileInfo['meta'] = {}): HYPFileInfo {
     const url = new URL(hypGamePackage.url);
     return {
         name: path.basename(url.pathname) || hypGamePackage.md5,
@@ -93,10 +82,7 @@ function parseHYPGamePackage(hypGamePackage: GamePackage) {
     return result.flat();
 }
 
-function parseBranch(
-    branch: GamePackageBranch,
-    branchName?: HYPFileInfo['meta']['branch']
-) {
+function parseBranch(branch: GamePackageBranch, branchName?: HYPFileInfo['meta']['branch']) {
     const result: HYPFileInfo[][] = [];
     if (branch.major) {
         result.push(parsePackageGroup(branch.major, branchName, 'major'));
@@ -104,14 +90,7 @@ function parseBranch(
     if (branch.patches.length) {
         const latestPatchVersion = branch.patches[0].version;
         for (const patch of branch.patches) {
-            result.push(
-                parsePackageGroup(
-                    patch,
-                    branchName,
-                    'patch',
-                    patch.version === latestPatchVersion
-                )
-            );
+            result.push(parsePackageGroup(patch, branchName, 'patch', patch.version === latestPatchVersion));
         }
     }
     return result.flat();
@@ -155,7 +134,7 @@ export class HYPFileProvider {
     #fileList: RemoteFileInfo[] = [];
     #deprecatedFileList: BasicFileInfo[] = [];
 
-    constructor(readonly option: HYPFileProviderOption) {}
+    constructor(readonly option: HYPFileProviderOption) { }
 
     get updatedAt() {
         return this.#updatedAt;
@@ -174,11 +153,7 @@ export class HYPFileProvider {
         if (isEqual(fileList, this.#fileList)) {
             return false;
         }
-        this.#deprecatedFileList = differenceWith(
-            this.#fileList,
-            fileList,
-            (x, y) => x.url === y.url && x.md5 === y.md5
-        );
+        this.#deprecatedFileList = differenceWith(this.#fileList, fileList, (x, y) => x.url === y.url && x.md5 === y.md5);
         this.#fileList = fileList;
         this.#updatedAt = Date.now();
         return true;
@@ -188,9 +163,7 @@ export class HYPFileProvider {
         const hypFiles = parseHYPGamePackage(hypGamePackage);
         const result: RemoteFileInfo[] = [];
         for (const hypFile of hypFiles) {
-            let branchOption: HYPFileProviderOption[
-                | 'branchMain'
-                | 'branchPreDownload'];
+            let branchOption: HYPFileProviderOption['branchMain' | 'branchPreDownload'];
             let typeOption: BranchOption['major' | 'patches'];
             if (hypFile.meta.branch === 'main') {
                 branchOption = this.option.branchMain;
@@ -205,18 +178,10 @@ export class HYPFileProvider {
             } else if (hypFile.meta.packageType === 'patch') {
                 typeOption = branchOption.patches;
             }
-            if (
-                !(typeOption === true) &&
-                !(typeOption === 'latest-only' && hypFile.meta.isLatestPatch)
-            ) {
+            if (!(typeOption === true) && !(typeOption === 'latest-only' && hypFile.meta.isLatestPatch)) {
                 continue;
             }
-            if (
-                hypFile.meta.audioLanguage &&
-                !this.option.audioLanguages?.includes(
-                    hypFile.meta.audioLanguage
-                )
-            ) {
+            if (hypFile.meta.audioLanguage && !this.option.audioLanguages?.includes(hypFile.meta.audioLanguage)) {
                 continue;
             }
             result.push(constructRemoteFileInfo(hypFile));

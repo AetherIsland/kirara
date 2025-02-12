@@ -1,7 +1,4 @@
-export async function doSthIgnoreErrs<T>(
-    errCodes: string[],
-    sth: () => Promise<T>
-) {
+export async function doSthIgnoreErrs<T>(errCodes: string[], sth: () => Promise<T>) {
     try {
         return await sth();
     } catch (err: any) {

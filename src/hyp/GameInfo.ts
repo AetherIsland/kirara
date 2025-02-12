@@ -1,4 +1,4 @@
-import { type GameId, type Image, type Icon } from './common.js';
+import { type GameId, type Icon, type Image } from './common.js';
 
 /**
  * 游戏信息

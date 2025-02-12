@@ -1,12 +1,6 @@
 import * as timers from 'node:timers';
 
-import {
-    type BasicFileInfo,
-    type RemoteFileInfo,
-    type StoragedFileInfo,
-    type FileStorage,
-    FileStatus
-} from '../type.js';
+import { type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo, FileStatus } from '../type.js';
 
 export class Dummy implements FileStorage {
     #files = new Map<string, FileStatus>();
@@ -32,13 +26,6 @@ export class Dummy implements FileStorage {
             this.#files.set(remoteFile.md5, FileStatus.READY);
             console.log('[Dummy]', remoteFile.md5, remoteFile.name, '已就绪');
         }, delay);
-        console.log(
-            '[Dummy]',
-            remoteFile.md5,
-            remoteFile.name,
-            '将会在',
-            delay,
-            '毫秒后就绪'
-        );
+        console.log('[Dummy]', remoteFile.md5, remoteFile.name, '将会在', delay, '毫秒后就绪');
     }
 }

@@ -1,14 +1,8 @@
-import * as path from 'node:path';
-import * as fsPromises from 'node:fs/promises';
 import * as child_process from 'node:child_process';
+import * as fsPromises from 'node:fs/promises';
+import * as path from 'node:path';
 
-import {
-    FileStatus,
-    type BasicFileInfo,
-    type RemoteFileInfo,
-    type FileStorage,
-    type StoragedFileInfo
-} from '../type.js';
+import { FileStatus, type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo } from '../type.js';
 import { doSthIgnoreErrs } from '../utils.js';
 
 export class Aria2 implements FileStorage {
@@ -31,10 +25,7 @@ export class Aria2 implements FileStorage {
     async getFileInfo(file: BasicFileInfo) {
         const { filePath, statusPath } = this.#getAbsolutePath(file);
         await fsPromises.stat(filePath);
-        const hasStatus = !!(await doSthIgnoreErrs(
-            ['ENOENT'],
-            async () => await fsPromises.stat(statusPath)
-        ));
+        const hasStatus = !!(await doSthIgnoreErrs(['ENOENT'], async () => await fsPromises.stat(statusPath)));
         let publicURL = `${file.md5}/${file.name}`;
         if (this.#baseURL) {
             publicURL = new URL(publicURL, this.#baseURL).href;
@@ -58,12 +49,8 @@ export class Aria2 implements FileStorage {
         if (proc) {
             proc.kill();
         }
-        await doSthIgnoreErrs(['ENOENT'], () =>
-            Promise.all([fsPromises.rm(filePath), fsPromises.rm(statusPath)])
-        );
-        await doSthIgnoreErrs(['ENOENT', 'ENOTEMPTY'], () =>
-            fsPromises.rmdir(dirPath)
-        );
+        await doSthIgnoreErrs(['ENOENT'], () => Promise.all([fsPromises.rm(filePath), fsPromises.rm(statusPath)]));
+        await doSthIgnoreErrs(['ENOENT', 'ENOTEMPTY'], () => fsPromises.rmdir(dirPath));
     }
     async downloadRemoteFile(remoteFile: RemoteFileInfo) {
         const { dirPath, filePath } = this.#getAbsolutePath(remoteFile);

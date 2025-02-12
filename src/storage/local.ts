@@ -1,15 +1,9 @@
-import * as path from 'node:path';
 import * as fsPromises from 'node:fs/promises';
+import * as path from 'node:path';
 
 import { DownloaderHelper } from 'node-downloader-helper';
 
-import {
-    FileStatus,
-    type BasicFileInfo,
-    type RemoteFileInfo,
-    type FileStorage,
-    type StoragedFileInfo
-} from '../type.js';
+import { FileStatus, type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo } from '../type.js';
 import { doSthIgnoreErrs } from '../utils.js';
 
 export class Local implements FileStorage {
@@ -70,12 +64,8 @@ export class Local implements FileStorage {
             await dl.stop();
             this.#downloaders.delete(filePath);
         }
-        await doSthIgnoreErrs(['ENOENT'], () =>
-            Promise.all([fsPromises.rm(filePath), fsPromises.rm(statusPath)])
-        );
-        await doSthIgnoreErrs(['ENOENT', 'ENOTEMPTY'], () =>
-            fsPromises.rmdir(dirPath)
-        );
+        await doSthIgnoreErrs(['ENOENT'], () => Promise.all([fsPromises.rm(filePath), fsPromises.rm(statusPath)]));
+        await doSthIgnoreErrs(['ENOENT', 'ENOTEMPTY'], () => fsPromises.rmdir(dirPath));
     }
     async downloadRemoteFile(remoteFile: RemoteFileInfo) {
         const { dirPath: dlDir, filePath } = this.#getAbsolutePath(remoteFile);

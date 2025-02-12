@@ -95,15 +95,10 @@ export function getAPIBaseByLauncherId(launcherId: string) {
     }
 }
 
-async function getData<T>(
-    input: Parameters<typeof fetch>[0],
-    node?: string
-): Promise<T> {
+async function getData<T>(input: Parameters<typeof fetch>[0], node?: string): Promise<T> {
     const response = await fetch(input);
     if (!response.ok) {
-        throw new Error(
-            `HYP Request Failed: ${response.status} ${response.statusText}`
-        );
+        throw new Error(`HYP Request Failed: ${response.status} ${response.statusText}`);
     }
     const responseData = (await response.json()) as {
         retcode: number;
@@ -111,9 +106,7 @@ async function getData<T>(
         data: unknown;
     };
     if (responseData.retcode !== 0) {
-        throw new Error(
-            `HYP Error: ${responseData.retcode} ${responseData.message}`
-        );
+        throw new Error(`HYP Error: ${responseData.retcode} ${responseData.message}`);
     }
     if (node) {
         const data: any = responseData.data;
@@ -158,10 +151,7 @@ export class HYPClient {
             url.searchParams.append('channel', this.addtionalParams.channel);
         }
         if (options?.withSubChannel && this.addtionalParams?.sub_channel) {
-            url.searchParams.append(
-                'sub_channel',
-                this.addtionalParams.sub_channel
-            );
+            url.searchParams.append('sub_channel', this.addtionalParams.sub_channel);
         }
         return url;
     }
