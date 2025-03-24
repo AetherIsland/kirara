@@ -2,6 +2,11 @@
 
 一个自动下载和管理米哈游游戏 PC 端更新包的工具。
 
+![screenshot](https://github.com/user-attachments/assets/d76f7bc3-ccae-4d99-8ec2-89a537eb78b7)
+
+> [!NOTE]
+> 以上屏幕截图仅供参考，不属于该项目的一部分。目前暂时需要自行准备用户界面供最终用户使用。
+
 ## 原理
 
 1. 从上游 API 获取数据，形成带有元数据的扁平文件列表。
