@@ -1,5 +1,8 @@
 # 绮良良 kirara
 
+> [!IMPORTANT]
+> 该项目处于停滞状态。构建该项目的初衷是希望能够在校园网内网中，全速（物理链路速率）分发游戏的更新包，缩短用户下载耗时。但官方启动器引入的全新的基于区块的下载机制 [`sophon`](https://github.com/Scighost/Starward/issues/725) 在效率上已远超基于 [HDiffPatch](https://github.com/sisong/HDiffPatch) 的传统更新包，因此这样做带来的收益有所减少。如果你有能够将 `sophon` 与该项目良好集成的想法，欢迎参与贡献，推动本项目发展。
+
 一个自动下载和管理米哈游游戏 PC 端更新包的工具。
 
 ![screenshot](https://github.com/user-attachments/assets/d76f7bc3-ccae-4d99-8ec2-89a537eb78b7)
