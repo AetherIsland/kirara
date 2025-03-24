@@ -15,21 +15,21 @@
     "build:rolldown": "rolldown -c"
   },
   "dependencies": {
-    "es-toolkit": "^1.32.0",
+    "es-toolkit": "^1.33.0",
     "node-downloader-helper": "^2.1.9"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.2",
-    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.2",
     "@tsconfig/node-lts": "^22.0.1",
-    "@types/node": "^22.13.1",
-    "rolldown": "1.0.0-beta.3",
-    "rollup": "^4.34.6",
+    "@types/node": "^22.13.11",
+    "rolldown": "1.0.0-beta.6",
+    "rollup": "^4.37.0",
     "rollup-plugin-progress": "^1.1.2",
     "rollup-plugin-sizes": "^1.1.0",
     "tslib": "^2.8.1",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   }
 }
