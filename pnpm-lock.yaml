@@ -15,21 +15,12 @@ importers:
         specifier: ^2.1.9
         version: 2.1.9
     devDependencies:
-      '@tsconfig/node-lts':
-        specifier: ^22.0.1
-        version: 22.0.1
       '@types/node':
         specifier: ^22.13.11
         version: 22.13.11
       rolldown:
         specifier: 1.0.0-beta.6
         version: 1.0.0-beta.6(typescript@5.8.2)
-      tslib:
-        specifier: ^2.8.1
-        version: 2.8.1
-      typescript:
-        specifier: ^5.8.2
-        version: 5.8.2
 
 packages:
 
@@ -107,9 +98,6 @@ packages:
     resolution: {integrity: sha512-ZxH7/+Wa88KiBa4TMCz8gj6TNewVeZr1J93TwU4AA6U2TFTgtkrx/9DbYUhoQ/m9L5+iHaPT++z2la5nVr9t+A==}
     cpu: [x64]
     os: [win32]
-
-  '@tsconfig/node-lts@22.0.1':
-    resolution: {integrity: sha512-BwlbLiYurZKrj+Pa6etSE1jXmr3VEDdgJto1jEYKcpBVwZZSWVkCPyFEFYbHdIOaFMlSTtV206DYPlT109aqug==}
 
   '@tybys/wasm-util@0.9.0':
     resolution: {integrity: sha512-6+7nlbMVX/PVDCwaIQ8nTOPveOcFLSt8GcXdx8hD0bt39uWxYT88uXzqTd4fTvqta7oeUJqudepapKNt2DYJFw==}
@@ -223,8 +211,6 @@ snapshots:
   '@rolldown/binding-win32-x64-msvc@1.0.0-beta.6':
     optional: true
 
-  '@tsconfig/node-lts@22.0.1': {}
-
   '@tybys/wasm-util@0.9.0':
     dependencies:
       tslib: 2.8.1
@@ -263,9 +249,11 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  tslib@2.8.1: {}
+  tslib@2.8.1:
+    optional: true
 
-  typescript@5.8.2: {}
+  typescript@5.8.2:
+    optional: true
 
   undici-types@6.20.0: {}
 

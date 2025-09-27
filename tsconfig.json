@@ -1,9 +1,29 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
+    // Type Checking
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "strict": true,
-    "sourceMap": true
-  },
-  "extends": "@tsconfig/node-lts/tsconfig.json"
+    // Modules
+    "module": "preserve",
+    "resolveJsonModule": true,
+    "noUncheckedSideEffectImports": true,
+    "rewriteRelativeImportExtensions": true,
+    "types": ["node"],
+    // Emit
+    "noEmit": true,
+    // Interop Constraints
+    "allowSyntheticDefaultImports": false,
+    "verbatimModuleSyntax": true,
+    // Language and Environment
+    "lib": ["ESNext"],
+    "libReplacement": false,
+    "moduleDetection": "force",
+    "target": "esnext",
+    // Completeness
+    "skipLibCheck": true
+  }
 }
