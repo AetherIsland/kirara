@@ -25,7 +25,7 @@ jobs:
           node-version: lts/*
           cache: pnpm
       - run: pnpm install
-      - run: pnpm run build:rollup --entryFileNames 'kirara-${{ steps.short_sha.outputs.sha7 }}.mjs'
+      - run: pnpm run build --entry-file-names 'kirara-${{ steps.short_sha.outputs.sha7 }}.mjs'
       - uses: actions/upload-artifact@v4
         with:
           name: kirara-${{ steps.short_sha.outputs.sha7 }}

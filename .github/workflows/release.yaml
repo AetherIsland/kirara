@@ -23,7 +23,7 @@ jobs:
           node-version: lts/*
           cache: pnpm
       - run: pnpm install
-      - run: pnpm run build:rollup --entryFileNames 'kirara-${{ github.event.release.tag_name }}.mjs'
+      - run: pnpm run build --entry-file-names 'kirara-${{ github.event.release.tag_name }}.mjs'
       - uses: actions/attest-build-provenance@v1
         with:
           subject-path: dist

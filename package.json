@@ -10,7 +10,7 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "node .",
-    "build": "rolldown -c"
+    "build": "rolldown -c rolldown.config.ts"
   },
   "dependencies": {
     "es-toolkit": "^1.39.10",
