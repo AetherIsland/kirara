@@ -1,13 +1,17 @@
 # 绮良良 kirara
 
 > [!IMPORTANT]
+>
 > 该项目处于停滞状态。构建该项目的初衷是希望能够在校园网内网中，全速（物理链路速率）分发游戏的更新包，缩短用户下载耗时。但官方启动器引入的全新的基于区块的下载机制 [`sophon`](https://github.com/Scighost/Starward/issues/725) 在效率上已远超基于 [HDiffPatch](https://github.com/sisong/HDiffPatch) 的传统更新包，因此这样做带来的收益有所减少。如果你有能够将 `sophon` 与该项目良好集成的想法，欢迎参与贡献，推动本项目发展。
+>
+> 自 `5.6.0` 版本起，原神（`hk4e`）不再提供压缩包形式的包体。
 
 一个自动下载和管理米哈游游戏 PC 端更新包的工具。
 
 ![screenshot](https://github.com/user-attachments/assets/d76f7bc3-ccae-4d99-8ec2-89a537eb78b7)
 
 > [!NOTE]
+>
 > 以上屏幕截图仅供参考，不属于该项目的一部分。目前暂时需要自行准备用户界面供最终用户使用。
 
 ## 原理
@@ -29,16 +33,17 @@
 ### 方式二：从源码运行
 
 1. 克隆或打包下载本仓库。
-2. 安装依赖：`npm install`。
-3. 构建：`npm run build:rollup` 或 `npm run build:tsc`。
+2. 安装依赖：`pnpm install`。
+3. 构建：`pnpm run build`。
 3. 编写配置文件 `app.config.json`。
-4. 运行：`npm start`。
+4. 运行：`pnpm start`。
 
 ## 配置
 
 目前，应用会在启动时读取工作目录下的 `app.config.json` 文件，并进行基本验证。以下是一个示例配置文件。
 
 > [!NOTE]
+>
 > JSON 文件不支持注释。
 
 ```jsonc
