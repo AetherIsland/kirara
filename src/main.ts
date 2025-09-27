@@ -4,11 +4,11 @@ import * as timers from 'node:timers';
 
 import { isEqual } from 'es-toolkit';
 
-import { getChannelByLauncherId, HYPClient, KnownLauncherId } from './hyp/client.js';
-import { HYPFileProvider } from './hyp/provider.js';
-import { Aria2 } from './storage/aria2.js';
-import { Dummy } from './storage/dummy.js';
-import { Local } from './storage/local.js';
+import { getChannelByLauncherId, HYPClient, KnownLauncherId } from './hyp/client.ts';
+import { HYPFileProvider } from './hyp/provider.ts';
+import { Aria2 } from './storage/aria2.ts';
+import { Dummy } from './storage/dummy.ts';
+import { Local } from './storage/local.ts';
 import {
     FileStatus,
     type AppConfig,
@@ -20,8 +20,8 @@ import {
     type PublicStatus,
     type PublicStatusGame,
     type RemoteFileInfo
-} from './type.js';
-import { doSthIgnoreErrs } from './utils.js';
+} from './type.ts';
+import { doSthIgnoreErrs } from './utils.ts';
 
 const LauncherIdMap = new Map<string, KnownLauncherId>([
     ['miHoYoLauncher', KnownLauncherId.miHoYoLauncher],

@@ -2,8 +2,8 @@ import * as path from 'node:path';
 
 import { differenceWith, isEqual } from 'es-toolkit';
 
-import { type BasicFileInfo, type RemoteFileInfo } from '../type.js';
-import { type GamePackage, type GamePackageBranch, type GamePackageFile, type GamePackageGroup } from './GamePackage.js';
+import { type BasicFileInfo, type RemoteFileInfo } from '../type.ts';
+import { type GamePackage, type GamePackageBranch, type GamePackageFile, type GamePackageGroup } from './GamePackage.ts';
 
 type HYPFileInfo = {
     name: string;

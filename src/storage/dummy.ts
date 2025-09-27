@@ -1,6 +1,6 @@
 import * as timers from 'node:timers';
 
-import { type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo, FileStatus } from '../type.js';
+import { type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo, FileStatus } from '../type.ts';
 
 export class Dummy implements FileStorage {
     #files = new Map<string, FileStatus>();

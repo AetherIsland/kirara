@@ -1,4 +1,4 @@
-import { type GameId } from './common.js';
+import { type GameId } from './common.ts';
 
 /**
  * 游戏包信息

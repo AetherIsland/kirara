@@ -3,8 +3,8 @@ import * as path from 'node:path';
 
 import { DownloaderHelper } from 'node-downloader-helper';
 
-import { FileStatus, type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo } from '../type.js';
-import { doSthIgnoreErrs } from '../utils.js';
+import { FileStatus, type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo } from '../type.ts';
+import { doSthIgnoreErrs } from '../utils.ts';
 
 export class Local implements FileStorage {
     #root: string;
@@ -84,7 +84,7 @@ export class Local implements FileStorage {
             await this.#setFileStatus(remoteFile, FileStatus.ERROR);
             throw new Error('FileInfo is inconsistent.');
         }
-        dl.on('error', async (err) => {
+        dl.on('error', async (_err) => {
             // console.log('Download Failed', err);
             await this.#setFileStatus(remoteFile, FileStatus.ERROR);
         });

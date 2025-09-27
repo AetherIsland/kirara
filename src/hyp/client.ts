@@ -1,5 +1,5 @@
-import { type GameInfo } from './GameInfo.js';
-import { type GamePackage } from './GamePackage.js';
+import { type GameInfo } from './GameInfo.ts';
+import { type GamePackage } from './GamePackage.ts';
 
 /**
  * 启动器 ID

@@ -1,6 +1,6 @@
-import { type HYPClient } from './hyp/client.js';
-import { type GameInfo } from './hyp/GameInfo.js';
-import { type HYPFileProvider, type HYPFileProviderOption } from './hyp/provider.js';
+import { type HYPClient } from './hyp/client.ts';
+import { type GameInfo } from './hyp/GameInfo.ts';
+import { type HYPFileProvider, type HYPFileProviderOption } from './hyp/provider.ts';
 
 export type BasicFileInfo = {
     name: string;
