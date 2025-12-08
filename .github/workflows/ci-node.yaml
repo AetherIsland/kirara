@@ -13,19 +13,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - id: short_sha
         name: Get short SHA
         run: echo "sha7=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
       - uses: pnpm/action-setup@v4
         with:
           version: latest
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: lts/*
       - run: pnpm install
       - run: pnpm run build --entry-file-names 'kirara-${{ steps.short_sha.outputs.sha7 }}.mjs'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: kirara-${{ steps.short_sha.outputs.sha7 }}
           path: dist
