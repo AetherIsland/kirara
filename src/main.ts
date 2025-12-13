@@ -9,16 +9,16 @@ import { HYPFileProvider } from './hyp/provider.ts';
 import { Aria2 } from './storage/aria2.ts';
 import { Dummy } from './storage/dummy.ts';
 import { Local } from './storage/local.ts';
-import {
-    type AppConfig,
-    type AppTask,
-    type AppTaskGame,
-    type BasicFileInfo,
-    type FileStorage,
-    type PublicFileInfo,
-    type PublicStatus,
-    type PublicStatusGame,
-    type RemoteFileInfo
+import type {
+    AppConfig,
+    AppTask,
+    AppTaskGame,
+    BasicFileInfo,
+    FileStorage,
+    PublicFileInfo,
+    PublicStatus,
+    PublicStatusGame,
+    RemoteFileInfo
 } from './type.ts';
 import { doSthIgnoreErrs } from './utils.ts';
 

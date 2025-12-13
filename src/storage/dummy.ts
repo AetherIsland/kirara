@@ -1,6 +1,6 @@
 import * as timers from 'node:timers';
 
-import { type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo } from '../type.ts';
+import type { BasicFileInfo, FileStorage, RemoteFileInfo, StoragedFileInfo } from '../type.ts';
 
 export class Dummy implements FileStorage {
     #files = new Map<string, 'ERROR' | 'READY' | 'DOWNLOADING'>();

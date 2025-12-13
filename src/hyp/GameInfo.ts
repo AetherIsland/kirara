@@ -1,4 +1,4 @@
-import { type GameId, type Icon, type Image } from './common.ts';
+import type { GameId, Icon, Image } from './common.ts';
 
 /**
  * 游戏信息

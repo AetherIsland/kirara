@@ -2,7 +2,7 @@ import * as child_process from 'node:child_process';
 import * as fsPromises from 'node:fs/promises';
 import * as path from 'node:path';
 
-import { type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo } from '../type.ts';
+import type { BasicFileInfo, FileStorage, RemoteFileInfo, StoragedFileInfo } from '../type.ts';
 import { doSthIgnoreErrs } from '../utils.ts';
 
 export class Aria2 implements FileStorage {

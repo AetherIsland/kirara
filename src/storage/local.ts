@@ -3,7 +3,7 @@ import * as path from 'node:path';
 
 import { DownloaderHelper } from 'node-downloader-helper';
 
-import { type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo, type FileStatus } from '../type.ts';
+import type { BasicFileInfo, FileStatus, FileStorage, RemoteFileInfo, StoragedFileInfo } from '../type.ts';
 import { doSthIgnoreErrs } from '../utils.ts';
 
 export class Local implements FileStorage {
