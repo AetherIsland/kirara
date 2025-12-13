@@ -4,30 +4,32 @@ import { type GamePackage } from './GamePackage.ts';
 /**
  * 启动器 ID
  */
-export enum KnownLauncherId {
-    miHoYoLauncher = 'jGHBHlcOq1',
-    HoYoPlay = 'VYTpXlbWo8',
-    BilibiliGenshin = 'umfgRO5gh5',
-    BilibiliStarRail = '6P5gHMNyK3',
-    BilibiliZZZ = 'xV0f4r1GT0'
-}
+export const KnownLauncherId = {
+    miHoYoLauncher: 'jGHBHlcOq1',
+    HoYoPlay: 'VYTpXlbWo8',
+    BilibiliGenshin: 'umfgRO5gh5',
+    BilibiliStarRail: '6P5gHMNyK3',
+    BilibiliZZZ: 'xV0f4r1GT0'
+} as const;
+export type KnownLauncherId = (typeof KnownLauncherId)[keyof typeof KnownLauncherId];
 
 /**
  * 游戏 ID
  */
-export enum KnownGameId {
-    bh3_cn = 'osvnlOc0S8',
-    bh3_global = '5TIVvvcwtM',
-    hk4e_cn = '1Z8W5NHUQb',
-    hk4e_global = 'gopR6Cufr3',
-    hk4e_bilibili = 'T2S0Gz4Dr2',
-    hkrpg_cn = '64kMb5iAWu',
-    hkrpg_global = '4ziysqXOQ8',
-    hkrpg_bilibili = 'EdtUqXfCHh',
-    nap_cn = 'x6znKlJ0xK',
-    nap_global = 'U5hbdsT9W7',
-    nap_bilibili = 'HXAFlmYa17'
-}
+export const KnownGameId = {
+    bh3_cn: 'osvnlOc0S8',
+    bh3_global: '5TIVvvcwtM',
+    hk4e_cn: '1Z8W5NHUQb',
+    hk4e_global: 'gopR6Cufr3',
+    hk4e_bilibili: 'T2S0Gz4Dr2',
+    hkrpg_cn: '64kMb5iAWu',
+    hkrpg_global: '4ziysqXOQ8',
+    hkrpg_bilibili: 'EdtUqXfCHh',
+    nap_cn: 'x6znKlJ0xK',
+    nap_global: 'U5hbdsT9W7',
+    nap_bilibili: 'HXAFlmYa17'
+} as const;
+export type KnownGameId = (typeof KnownGameId)[keyof typeof KnownGameId];
 
 /**
  * 获取游戏对应的启动器 ID
@@ -121,17 +123,21 @@ async function getData<T>(input: Parameters<typeof fetch>[0], node?: string): Pr
 }
 
 export class HYPClient {
-    readonly #apiBase: string;
+    readonly #apiBase;
+    readonly launcher_id;
+    readonly additionalParams?;
 
     constructor(
-        readonly launcher_id: string,
-        readonly addtionalParams?: {
-            readonly language?: string;
-            readonly channel?: string;
-            readonly sub_channel?: string;
+        launcher_id: string,
+        additionalParams?: {
+            language?: string;
+            channel?: string;
+            sub_channel?: string;
         }
     ) {
-        this.#apiBase = getAPIBaseByLauncherId(this.launcher_id);
+        this.#apiBase = getAPIBaseByLauncherId(launcher_id);
+        this.launcher_id = launcher_id;
+        this.additionalParams = additionalParams;
     }
 
     #getURL(
@@ -144,14 +150,14 @@ export class HYPClient {
     ) {
         const url = new URL(apiName, this.#apiBase);
         url.searchParams.append('launcher_id', this.launcher_id);
-        if (options?.withLanguage && this.addtionalParams?.language) {
-            url.searchParams.append('language', this.addtionalParams.language);
+        if (options?.withLanguage && this.additionalParams?.language) {
+            url.searchParams.append('language', this.additionalParams.language);
         }
-        if (options?.withChannel && this.addtionalParams?.channel) {
-            url.searchParams.append('channel', this.addtionalParams.channel);
+        if (options?.withChannel && this.additionalParams?.channel) {
+            url.searchParams.append('channel', this.additionalParams.channel);
         }
-        if (options?.withSubChannel && this.addtionalParams?.sub_channel) {
-            url.searchParams.append('sub_channel', this.addtionalParams.sub_channel);
+        if (options?.withSubChannel && this.additionalParams?.sub_channel) {
+            url.searchParams.append('sub_channel', this.additionalParams.sub_channel);
         }
         return url;
     }

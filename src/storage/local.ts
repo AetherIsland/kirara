@@ -3,7 +3,7 @@ import * as path from 'node:path';
 
 import { DownloaderHelper } from 'node-downloader-helper';
 
-import { FileStatus, type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo } from '../type.ts';
+import { type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo, type FileStatus } from '../type.ts';
 import { doSthIgnoreErrs } from '../utils.ts';
 
 export class Local implements FileStorage {
@@ -37,22 +37,22 @@ export class Local implements FileStorage {
             publicURL = new URL(publicURL, this.#baseURL).href;
         }
         const info: StoragedFileInfo = {
-            status: FileStatus.ERROR,
+            status: 'ERROR',
             path: publicURL
         };
         switch (statusFileContent) {
-            case FileStatus.READY:
+            case 'READY':
                 await doSthIgnoreErrs(['ENOENT'], async () => {
                     await fsPromises.stat(filePath);
-                    info.status = FileStatus.READY;
+                    info.status = 'READY';
                 });
                 break;
-            case FileStatus.DOWNLOADING:
+            case 'DOWNLOADING':
                 const dl = this.#downloaders.get(filePath);
                 if (dl) {
                     info.progress = dl.getStats().progress;
                 }
-                info.status = FileStatus.DOWNLOADING;
+                info.status = 'DOWNLOADING';
                 break;
         }
         return info;
@@ -70,7 +70,7 @@ export class Local implements FileStorage {
     async downloadRemoteFile(remoteFile: RemoteFileInfo) {
         const { dirPath: dlDir, filePath } = this.#getAbsolutePath(remoteFile);
         await doSthIgnoreErrs(['EEXIST'], () => fsPromises.mkdir(dlDir));
-        await this.#setFileStatus(remoteFile, FileStatus.DOWNLOADING);
+        await this.#setFileStatus(remoteFile, 'DOWNLOADING');
         const dl = new DownloaderHelper(remoteFile.url, dlDir, {
             resumeIfFileExists: true,
             fileName: remoteFile.name,
@@ -81,19 +81,19 @@ export class Local implements FileStorage {
         this.#downloaders.set(filePath, dl);
         const info = await dl.getTotalSize();
         if (info.name !== remoteFile.name || info.total !== remoteFile.size) {
-            await this.#setFileStatus(remoteFile, FileStatus.ERROR);
+            await this.#setFileStatus(remoteFile, 'ERROR');
             throw new Error('FileInfo is inconsistent.');
         }
         dl.on('error', async (_err) => {
             // console.log('Download Failed', err);
-            await this.#setFileStatus(remoteFile, FileStatus.ERROR);
+            await this.#setFileStatus(remoteFile, 'ERROR');
         });
         dl.on('end', async () => {
             // console.log('Download Completed');
-            await this.#setFileStatus(remoteFile, FileStatus.READY);
+            await this.#setFileStatus(remoteFile, 'READY');
             this.#downloaders.delete(filePath);
         });
         dl.start();
-        await this.#setFileStatus(remoteFile, FileStatus.DOWNLOADING);
+        await this.#setFileStatus(remoteFile, 'DOWNLOADING');
     }
 }

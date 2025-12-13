@@ -133,8 +133,11 @@ export class HYPFileProvider {
     #updatedAt?: number;
     #fileList: RemoteFileInfo[] = [];
     #deprecatedFileList: BasicFileInfo[] = [];
+    readonly option;
 
-    constructor(readonly option: HYPFileProviderOption) { }
+    constructor(option: HYPFileProviderOption) {
+        this.option = option;
+    }
 
     get updatedAt() {
         return this.#updatedAt;

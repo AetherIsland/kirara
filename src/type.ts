@@ -16,11 +16,7 @@ export type RemoteFileInfo = {
     tags: string[];
 };
 
-export enum FileStatus {
-    ERROR = 'ERROR',
-    READY = 'READY',
-    DOWNLOADING = 'DOWNLOADING'
-}
+export type FileStatus = 'ERROR' | 'READY' | 'DOWNLOADING';
 
 export type StoragedFileInfo = {
     status: FileStatus;

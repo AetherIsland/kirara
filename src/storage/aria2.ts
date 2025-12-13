@@ -2,7 +2,7 @@ import * as child_process from 'node:child_process';
 import * as fsPromises from 'node:fs/promises';
 import * as path from 'node:path';
 
-import { FileStatus, type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo } from '../type.ts';
+import { type BasicFileInfo, type FileStorage, type RemoteFileInfo, type StoragedFileInfo } from '../type.ts';
 import { doSthIgnoreErrs } from '../utils.ts';
 
 export class Aria2 implements FileStorage {
@@ -31,15 +31,15 @@ export class Aria2 implements FileStorage {
             publicURL = new URL(publicURL, this.#baseURL).href;
         }
         const info: StoragedFileInfo = {
-            status: FileStatus.ERROR,
+            status: 'ERROR',
             path: publicURL
         };
         if (hasStatus) {
             if (this.#downloaders.has(filePath)) {
-                info.status = FileStatus.DOWNLOADING;
+                info.status = 'DOWNLOADING';
             }
         } else {
-            info.status = FileStatus.READY;
+            info.status = 'READY';
         }
         return info;
     }

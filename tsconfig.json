@@ -17,6 +17,7 @@
     "noEmit": true,
     // Interop Constraints
     "allowSyntheticDefaultImports": false,
+    "erasableSyntaxOnly": true,
     "verbatimModuleSyntax": true,
     // Language and Environment
     "lib": ["ESNext"],

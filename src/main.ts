@@ -10,7 +10,6 @@ import { Aria2 } from './storage/aria2.ts';
 import { Dummy } from './storage/dummy.ts';
 import { Local } from './storage/local.ts';
 import {
-    FileStatus,
     type AppConfig,
     type AppTask,
     type AppTaskGame,
@@ -163,17 +162,17 @@ async function syncStorage(storage: FileStorage, fileList?: RemoteFileInfo[]) {
         for (const file of fileList) {
             let info = await doSthIgnoreErrs(['ENOENT'], () => storage.getFileInfo(file));
             try {
-                if (!info || info.status === FileStatus.ERROR) {
+                if (!info || info.status === 'ERROR') {
                     console.log('尝试下载', file.name);
                     await storage.downloadRemoteFile(file);
-                    info = { status: FileStatus.DOWNLOADING };
+                    info = { status: 'DOWNLOADING' };
                 }
             } catch (err) {
                 console.log('尝试下载', file.name, '时发生错误', err);
             }
             publicFileInfos.push({
                 ...file,
-                status: FileStatus.ERROR,
+                status: 'ERROR',
                 ...info
             });
         }
