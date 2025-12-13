@@ -30,13 +30,19 @@
 2. 编写配置文件 `app.config.json`。
 3. 使用最新 LTS 版 Node.js 运行。
 
-### 方式二：从源码运行
+### 方式二：从源码运行（使用打包器）
 
 1. 克隆或打包下载本仓库。
 2. 安装依赖：`pnpm install`。
 3. 构建：`pnpm run build`。
 3. 编写配置文件 `app.config.json`。
 4. 运行：`pnpm start`。
+
+### 方式三：从源码运行（使用类型剥离）
+
+1. 克隆或打包下载本仓库。
+2. 安装依赖：`pnpm install`。
+3. 运行：`node src/main.ts`。
 
 ## 配置
 
